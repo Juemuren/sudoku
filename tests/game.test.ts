@@ -24,10 +24,12 @@ test("每个难度生成合法且唯一解的题目", () => {
 test("给定数字不可修改，普通数字可输入和清除", () => {
   const start = newGame("easy");
   const given = start.puzzle.findIndex((value) => value !== 0);
-  const empty = start.puzzle.findIndex((value) => value === 0);
+  const empty = start.puzzle.indexOf(0);
   const unchanged = enterValue(selectCell(start, given), 0);
   assert.equal(unchanged.board[given], start.puzzle[given]);
-  const entered = enterValue(selectCell(start, empty), start.solution[empty]!);
+  const correct = start.solution[empty];
+  assert.ok(correct !== undefined);
+  const entered = enterValue(selectCell(start, empty), correct);
   assert.equal(entered.board[empty], start.solution[empty]);
   assert.equal(enterValue(entered, 0).board[empty], 0);
   assert.equal(start.board[empty], 0);

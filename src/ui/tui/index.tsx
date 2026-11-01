@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { Box, Text, useApp, useInput } from "ink";
-import React, { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   enterValue,
   type GameState,
@@ -11,6 +11,9 @@ import {
 import { columnOf, rowOf } from "../../domain/board.js";
 import type { Difficulty } from "../../domain/generator.js";
 import { conflicts, isSolved } from "../../domain/rules.js";
+
+const rowKeys = Array.from({ length: 9 }, (_, index) => `row-${index}`);
+const columnKeys = Array.from({ length: 9 }, (_, index) => `column-${index}`)
 
 function App() {
   const { exit } = useApp();
@@ -82,16 +85,16 @@ function App() {
         数独 {label} {time} 空格 {remaining} 提示 {game.hintsUsed}
       </Text>
       <Text>┏━━━━━━━┳━━━━━━━┳━━━━━━━┓</Text>
-      {Array.from({ length: 9 }, (_, row) => (
-        <React.Fragment key={row}>
+      {rowKeys.map((rowKey, row) => (
+        <Fragment key={rowKey}>
           <Text>
             {"┃ "}
-            {Array.from({ length: 9 }, (_, column) => {
+            {columnKeys.map((columnKey, column) => {
               const index = row * 9 + column;
               const value = game.board[index];
               const selected = game.selected === index;
               return (
-                <React.Fragment key={column}>
+                <Fragment key={columnKey}>
                   <Text
                     bold={game.puzzle[index] !== 0 || selected}
                     color={
@@ -112,7 +115,7 @@ function App() {
                         ? " ┃"
                         : " "}
                   </Text>
-                </React.Fragment>
+                </Fragment>
               );
             })}
           </Text>
@@ -123,7 +126,7 @@ function App() {
                 ? "┗━━━━━━━┻━━━━━━━┻━━━━━━━┛"
                 : ""}
           </Text>
-        </React.Fragment>
+        </Fragment>
       ))}
       <Text
         color={

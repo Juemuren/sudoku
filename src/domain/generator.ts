@@ -19,7 +19,8 @@ export function generatePuzzle(difficulty: Difficulty = "medium"): Puzzle {
   )) {
     if (puzzle.filter((value) => value !== 0).length <= clueTargets[difficulty])
       break;
-    const saved = puzzle[index]!;
+    const saved = puzzle[index];
+    if (saved === undefined) throw new Error("生成的棋盘缺少数字。");
     puzzle[index] = 0;
     if (solve(puzzle, 2).length !== 1) puzzle[index] = saved;
   }

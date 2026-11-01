@@ -57,7 +57,9 @@ export function requestHint(state: GameState): GameState {
   );
   if (index === -1) return { ...state, message: "没有需要提示的格子。" };
   const board = [...state.board];
-  board[index] = state.solution[index]!;
+  const hint = state.solution[index];
+  if (hint === undefined) throw new Error("答案棋盘缺少提示数字。");
+  board[index] = hint;
   return {
     ...state,
     board,

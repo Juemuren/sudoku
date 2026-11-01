@@ -38,10 +38,15 @@ export function solve(board: Board, limit = 1, randomize = false): Board[] {
   return solutions;
 }
 
-export function shuffle<T>(items: T[]): T[] {
+export function shuffle(items: number[]): number[] {
   for (let index = items.length - 1; index > 0; index--) {
     const other = Math.floor(Math.random() * (index + 1));
-    [items[index], items[other]] = [items[other]!, items[index]!];
+    const current = items[index];
+    const selected = items[other];
+    if (current === undefined || selected === undefined)
+      throw new Error("无法打乱缺少元素的数组。");
+    items[index] = selected;
+    items[other] = current;
   }
   return items;
 }
