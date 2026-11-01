@@ -2,11 +2,12 @@
 
 ## 技术栈
 
+包管理器使用 pnpm 12，运行时为 Node.js 26
+
 - 游戏逻辑使用 TypeScript
 - WebUI 使用 React
 - TUI 使用 Ink
 - 自动求解器使用 z3
-- 包管理器使用 pnpm
 - 打包使用 Vite
 - 静态检查和格式化使用 Biome
 

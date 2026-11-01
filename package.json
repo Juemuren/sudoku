@@ -1,0 +1,26 @@
+{
+  "name": "sudoku",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=26"
+  },
+  "packageManager": "pnpm@12.16.1",
+  "scripts": {
+    "build": "tsc",
+    "dev": "npm run start",
+    "start": "npm run build && node dist/src/ui/tui/index.js",
+    "check": "tsc --noEmit",
+    "test": "npm run build && node --test dist/tests/game.test.js"
+  },
+  "dependencies": {
+    "ink": "^8.0.0",
+    "react": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.0",
+    "@types/react": "^19.2.18",
+    "typescript": "^6.0.3"
+  }
+}
