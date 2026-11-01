@@ -3,8 +3,11 @@ export const CELL_COUNT = SIZE * SIZE;
 export type Board = number[];
 
 export function assertBoard(board: Board): void {
-  if (board.length !== CELL_COUNT || board.some((value) => !Number.isInteger(value) || value < 0 || value > 9)) {
-    throw new Error('棋盘必须包含 81 个 0–9 的整数。');
+  if (
+    board.length !== CELL_COUNT ||
+    board.some((value) => !Number.isInteger(value) || value < 0 || value > 9)
+  ) {
+    throw new Error("棋盘必须包含 81 个 0–9 的整数。");
   }
 }
 
@@ -23,7 +26,12 @@ export function boxOf(index: number): number {
 export function peers(index: number): number[] {
   const result: number[] = [];
   for (let other = 0; other < CELL_COUNT; other++) {
-    if (other !== index && (rowOf(other) === rowOf(index) || columnOf(other) === columnOf(index) || boxOf(other) === boxOf(index))) {
+    if (
+      other !== index &&
+      (rowOf(other) === rowOf(index) ||
+        columnOf(other) === columnOf(index) ||
+        boxOf(other) === boxOf(index))
+    ) {
       result.push(other);
     }
   }

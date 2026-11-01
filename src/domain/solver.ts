@@ -1,5 +1,5 @@
-import { type Board, CELL_COUNT } from './board.js';
-import { candidates, conflicts } from './rules.js';
+import { type Board, CELL_COUNT } from "./board.js";
+import { candidates, conflicts } from "./rules.js";
 
 // Returns at most `limit` solutions. A limit of two is enough to check uniqueness.
 export function solve(board: Board, limit = 1, randomize = false): Board[] {
