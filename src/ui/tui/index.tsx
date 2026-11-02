@@ -7,5 +7,5 @@ if (!process.stdin.isTTY) {
   process.exitCode = 1;
 } else {
   const { render } = await import("ink");
-  render(<App />);
+  render(<App />, { alternateScreen: true });
 }
