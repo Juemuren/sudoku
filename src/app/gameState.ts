@@ -1,4 +1,10 @@
-import { type Board, CELL_COUNT } from "../domain/board.js";
+import {
+  type Board,
+  CELL_COUNT,
+  columnOf,
+  rowOf,
+  SIZE,
+} from "../domain/board.js";
 import { type Difficulty, generatePuzzle } from "../domain/generator.js";
 import { isSolved } from "../domain/rules.js";
 
@@ -31,6 +37,31 @@ export function selectCell(state: GameState, index: number): GameState {
   if (!Number.isInteger(index) || index < 0 || index >= CELL_COUNT)
     return state;
   return { ...state, selected: index };
+}
+
+export type Direction = "up" | "down" | "left" | "right";
+
+export function moveSelection(
+  state: GameState,
+  direction: Direction,
+): GameState {
+  const row = rowOf(state.selected);
+  const column = columnOf(state.selected);
+  const nextRow = Math.max(
+    0,
+    Math.min(
+      SIZE - 1,
+      row + (direction === "down" ? 1 : direction === "up" ? -1 : 0),
+    ),
+  );
+  const nextColumn = Math.max(
+    0,
+    Math.min(
+      SIZE - 1,
+      column + (direction === "right" ? 1 : direction === "left" ? -1 : 0),
+    ),
+  );
+  return selectCell(state, nextRow * SIZE + nextColumn);
 }
 
 export function enterValue(state: GameState, value: number): GameState {
