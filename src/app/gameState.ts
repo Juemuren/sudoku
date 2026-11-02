@@ -17,6 +17,7 @@ export type GameState = {
   message: string;
   hintsUsed: number;
   startedAt: number;
+  elapsedBeforeStart: number;
   history: { board: Board; selected: number; hintsUsed: number }[];
 };
 
@@ -31,6 +32,7 @@ export function newGame(difficulty: Difficulty = "medium"): GameState {
     message: "方向键移动，1–9 填数。",
     hintsUsed: 0,
     startedAt: Date.now(),
+    elapsedBeforeStart: 0,
     history: [],
   };
 }

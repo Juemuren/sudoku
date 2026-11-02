@@ -24,6 +24,8 @@ const gameHints: KeyHint[] = [
   { key: "M", action: "中等" },
   { key: "D", action: "困难" },
   { key: "N", action: "新局" },
+  { key: "S", action: "保存" },
+  { key: "L", action: "加载" },
   { key: "Q", action: "退出" },
 ];
 

@@ -13,13 +13,16 @@ import { gameStats } from "../../app/gameStats.js";
 import type { Difficulty } from "../../domain/generator.js";
 import { Footer } from "./Footer.js";
 import { Header } from "./Header.js";
+import { SaveLoadPrompt } from "./SaveLoadPrompt.js";
 import { SudokuBoard } from "./SudokuBoard.js";
+import { useSaveLoad } from "./useSaveLoad.js";
 
 export function App() {
   const { exit } = useApp();
   const { columns, rows } = useWindowSize();
   const [game, setGame] = useState<GameState>(() => newGame());
   const [now, setNow] = useState(Date.now());
+  const saveLoad = useSaveLoad(game, setGame);
 
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 1000);
@@ -27,6 +30,8 @@ export function App() {
   }, []);
 
   useInput((input, key) => {
+    if (saveLoad.active || input === "s" || input === "l") return;
+    saveLoad.clearStatus();
     if (input === "q" || (key.ctrl && input === "c")) {
       exit();
       return;
@@ -69,14 +74,17 @@ export function App() {
             ? "hard"
             : undefined;
     if (difficulty) {
+      saveLoad.forgetLocation();
       setGame(newGame(difficulty));
       return;
     }
-    if (input === "n") setGame((state) => newGame(state.difficulty));
+    if (input === "n") {
+      saveLoad.forgetLocation();
+      setGame((state) => newGame(state.difficulty));
+    }
   });
 
   const { badCells, solved, remaining, elapsedSeconds } = gameStats(game, now);
-
   return (
     <Box
       width={columns}
@@ -98,10 +106,11 @@ export function App() {
         />
         <SudokuBoard game={game} badCells={badCells} />
         <Footer
-          message={game.message}
+          message={saveLoad.status || game.message}
           solved={solved}
           conflictCount={badCells.size}
         />
+        <SaveLoadPrompt dialog={saveLoad.dialog} busy={saveLoad.busy} />
       </Box>
     </Box>
   );

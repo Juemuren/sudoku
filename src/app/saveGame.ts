@@ -1,0 +1,94 @@
+import { z } from "zod";
+import { CELL_COUNT } from "../domain/board.js";
+import { conflicts } from "../domain/rules.js";
+import { solve } from "../domain/solver.js";
+import type { GameState } from "./gameState.js";
+
+const boardSchema = z.array(z.number().int().min(0).max(9)).length(CELL_COUNT);
+const saveSchema = z.object({
+  version: z.literal(1),
+  game: z.object({
+    puzzle: boardSchema,
+    board: boardSchema,
+    difficulty: z.enum(["easy", "medium", "hard"]),
+    selected: z
+      .number()
+      .int()
+      .min(0)
+      .max(CELL_COUNT - 1),
+    hintsUsed: z.number().int().nonnegative().safe(),
+    elapsedMilliseconds: z.number().int().nonnegative().safe(),
+  }),
+});
+
+export type SavedGame = z.infer<typeof saveSchema>;
+
+export function serializeGame(state: GameState, now = Date.now()): string {
+  return JSON.stringify(
+    {
+      version: 1,
+      game: {
+        puzzle: state.puzzle,
+        board: state.board,
+        difficulty: state.difficulty,
+        selected: state.selected,
+        hintsUsed: state.hintsUsed,
+        elapsedMilliseconds: Math.max(
+          0,
+          Math.floor(state.elapsedBeforeStart + now - state.startedAt),
+        ),
+      },
+    } satisfies SavedGame,
+    null,
+    2,
+  );
+}
+
+export function parseSavedGame(json: string): SavedGame {
+  let value: unknown;
+  try {
+    value = JSON.parse(json);
+  } catch {
+    throw new Error("存档不是有效的 JSON。");
+  }
+  const parsed = saveSchema.safeParse(value);
+  if (!parsed.success) {
+    const issue = parsed.error.issues[0];
+    throw new Error(`存档格式错误：${issue?.path.join(".") || "根对象"}。`);
+  }
+  const { puzzle, board } = parsed.data.game;
+  for (let index = 0; index < CELL_COUNT; index++) {
+    if (puzzle[index] !== 0 && board[index] !== puzzle[index]) {
+      throw new Error(`存档修改了第 ${index + 1} 格的题目数字。`);
+    }
+  }
+  if (conflicts(puzzle).size > 0) throw new Error("存档题目中的给定数字冲突。");
+  return parsed.data;
+}
+
+export function restoreSavedGame(saved: SavedGame): GameState {
+  const solutions = solve(saved.game.puzzle, 2);
+  const solution = solutions[0];
+  if (!solution) throw new Error("存档题目无解。");
+  if (solutions.length > 1) throw new Error("存档题目有多个解。");
+  const {
+    puzzle,
+    board,
+    difficulty,
+    selected,
+    hintsUsed,
+    elapsedMilliseconds,
+  } = saved.game;
+  return {
+    puzzle: [...puzzle],
+    board: [...board],
+    solution,
+    difficulty,
+    selected,
+    hintsUsed,
+    elapsedBeforeStart: elapsedMilliseconds,
+    startedAt: Date.now(),
+    history: [],
+    message: "已加载存档。",
+  };
+}
