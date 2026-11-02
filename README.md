@@ -11,14 +11,21 @@ pnpm install
 pnpm start
 ```
 
-在交互式终端中运行。方向键移动，`1`–`9` 填数，`0` 或退格清除，`h` 获取提示；`e`、`m`、`d` 开始简单、中等、困难新局，`n` 重开当前难度，`q` 退出。红色数字表示同行、同列或同宫冲突。
+游戏在交互式终端中运行。
 
 ## 检查和测试
 
 使用 TypeScript 进行类型检查
 
 ```sh
-pnpm run check
+pnpm run typecheck
+```
+
+使用 Biome 进行静态检查和格式化
+
+```sh
+pnpm run lint
+pnpm run format
 ```
 
 使用 `node:test` 模块进行测试
@@ -26,5 +33,3 @@ pnpm run check
 ```sh
 pnpm test
 ```
-
-目前实现共享游戏逻辑和 TUI；WebUI、存档、人类解题策略和 z3 求解器尚未实现。难度当前按目标给定数字数量划分，不代表人类解题复杂度。

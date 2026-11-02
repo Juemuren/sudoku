@@ -49,7 +49,7 @@ flowchart LR
 src/
   ui/
     tui/
-    web/
+    webui/
   app/
     gameState.ts
     useCases/
@@ -72,3 +72,5 @@ src/
       hintEngine.ts
       difficultyEvaluator.ts
 ```
+
+目前实现共享游戏逻辑和 TUI；WebUI、存档、人类解题策略和 z3 求解器尚未实现。
