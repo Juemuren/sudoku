@@ -16,6 +16,7 @@ const editingHints: KeyHint[] = [
   { key: "1–9", action: "填入" },
   { key: "0/Backspace", action: "清除" },
   { key: "H", action: "提示" },
+  { key: "U", action: "撤销" },
 ];
 
 const gameHints: KeyHint[] = [
@@ -49,7 +50,7 @@ export function Footer({ message, solved, conflictCount }: Props) {
     <Box flexDirection="column" alignItems="center" width="100%">
       <Text color={solved ? "green" : conflictCount ? "red" : "yellow"}>
         {message}
-        {conflictCount ? ` 冲突格：${conflictCount}` : ""}
+        {conflictCount ? `冲突格：${conflictCount}` : ""}
       </Text>
       <Box flexDirection="column" marginTop={1} width="100%">
         <KeyGroup title="操作" hints={editingHints} />

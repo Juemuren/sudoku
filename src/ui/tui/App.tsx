@@ -7,6 +7,7 @@ import {
   moveSelection,
   newGame,
   requestHint,
+  undo,
 } from "../../app/gameState.js";
 import { gameStats } from "../../app/gameStats.js";
 import type { Difficulty } from "../../domain/generator.js";
@@ -53,6 +54,10 @@ export function App() {
     }
     if (input === "h") {
       setGame(requestHint);
+      return;
+    }
+    if (input === "u") {
+      setGame(undo);
       return;
     }
     const difficulty: Difficulty | undefined =
