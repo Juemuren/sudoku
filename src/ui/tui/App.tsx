@@ -79,7 +79,12 @@ export function App() {
       justifyContent="center"
       alignItems="center"
     >
-      <Box flexDirection="column" padding={1}>
+      <Box
+        flexDirection="column"
+        alignItems="center"
+        width={Math.min(columns, 64)}
+        padding={1}
+      >
         <Header
           difficulty={game.difficulty}
           elapsedSeconds={elapsedSeconds}
