@@ -6,7 +6,8 @@ import {
   SIZE,
 } from "../domain/board.ts";
 import { type Difficulty, generatePuzzle } from "../domain/generator.ts";
-import { isSolved } from "../domain/rules.ts";
+import { findHumanStep } from "../domain/humanSolver.ts";
+import { conflicts, isSolved } from "../domain/rules.ts";
 
 export type GameState = {
   puzzle: Board;
@@ -90,26 +91,40 @@ function entryMessage(board: Board, value: number): string {
 }
 
 export function requestHint(state: GameState): GameState {
-  const index = state.board.findIndex(
-    (value, i) => value !== state.solution[i] && state.puzzle[i] === 0,
-  );
-  if (index === -1) return { ...state, message: "没有需要提示的格子。" };
+  if (conflicts(state.board).size > 0) {
+    return { ...state, message: "棋盘中有冲突，请先检查。" };
+  }
+  if (
+    state.board.some((value, index) =>
+      value !== 0 && value !== state.solution[index]
+    )
+  ) {
+    return { ...state, message: "棋盘中有填错的数字，请先检查。" };
+  }
+  const step = findHumanStep(state.board);
+  if (!step) {
+    return {
+      ...state,
+      message: isSolved(state.board)
+        ? "没有需要提示的格子。"
+        : "当前没有可用的基础技巧提示。",
+    };
+  }
   const board = [...state.board];
-  const hint = state.solution[index];
-  if (hint === undefined) throw new Error("答案棋盘缺少提示数字。");
-  board[index] = hint;
+  board[step.index] = step.value;
+  const explanation = `提示（${
+    step.technique === "single-candidate" ? "唯一候选数" : "唯一位置"
+  }）：${step.reason}`;
   return {
     ...state,
     board,
     ...clockAfterBoardChange(state, board),
     history: [...state.history, snapshot(state)],
-    selected: index,
+    selected: step.index,
     hintsUsed: state.hintsUsed + 1,
     message: isSolved(board)
-      ? "完成！恭喜解出数独。"
-      : `提示：第 ${Math.floor(index / 9) + 1} 行第 ${(index % 9) + 1} 列是 ${
-        board[index]
-      }。`,
+      ? `${explanation} 完成！恭喜解出数独。`
+      : explanation,
   };
 }
 

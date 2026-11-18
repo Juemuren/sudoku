@@ -41,6 +41,18 @@ Deno.test("提示填写一个正确数字并记录次数", () => {
   assert.equal(hinted.hintsUsed, 1);
   assert.equal(hinted.board[hinted.selected], hinted.solution[hinted.selected]);
   assert.equal(start.board[hinted.selected], 0);
+  assert.match(hinted.message, /提示（唯一候选数|唯一位置）：/);
+});
+
+Deno.test("错误填数时提示不改棋盘或计数", () => {
+  const start = newGame("easy");
+  const empty = start.board.indexOf(0);
+  const wrong = start.solution[empty] === 1 ? 2 : 1;
+  const entered = enterValue(selectCell(start, empty), wrong);
+  const hinted = requestHint(entered);
+  assert.deepEqual(hinted.board, entered.board);
+  assert.equal(hinted.hintsUsed, entered.hintsUsed);
+  assert.match(hinted.message, /冲突|填错/);
 });
 
 Deno.test("手动解出数独后用时不再增加", () => {
@@ -70,4 +82,5 @@ Deno.test("提示解出数独后用时不再增加", () => {
   almostDone.board[empty] = 0;
   const solved = requestHint(almostDone);
   assert.equal(gameStats(solved, Date.now() + 30_000).elapsedSeconds, 2);
+  assert.match(solved.message, /提示（唯一候选数）：.*完成！/);
 });
