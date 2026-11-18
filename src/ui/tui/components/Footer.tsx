@@ -1,5 +1,5 @@
 import { Box, Text } from "ink";
-import { terminalColors } from "../../styles/colors.ts";
+import { colors } from "../../styles/colors.ts";
 
 type Props = {
   message: string;
@@ -35,14 +35,14 @@ function KeyGroup({ title, hints }: { title: string; hints: KeyHint[] }) {
     <Box flexWrap="wrap" justifyContent="center" columnGap={2}>
       <Text
         bold
-        color={terminalColors.textOnAccent}
-        backgroundColor={terminalColors.accent}
+        color={colors.canvas}
+        backgroundColor={colors.accent}
       >
         {` ${title} `}
       </Text>
       {hints.map(({ key, action }) => (
         <Box key={key}>
-          <Text bold color={terminalColors.accent}>
+          <Text bold color={colors.accent}>
             [{key}]
           </Text>
           <Text dimColor>{action}</Text>
@@ -68,7 +68,7 @@ export function Footer({ message, solved, conflictCount }: Props) {
 }
 
 function messageColor(solved: boolean, conflictCount: number) {
-  if (solved) return terminalColors.success;
-  if (conflictCount) return terminalColors.conflict;
-  return terminalColors.warning;
+  if (solved) return colors.success;
+  if (conflictCount) return colors.conflict;
+  return colors.warning;
 }

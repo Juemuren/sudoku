@@ -2,7 +2,7 @@ import { Text } from "ink";
 import { Fragment } from "react";
 import type { GameState } from "../../../app/gameState.ts";
 import { SIZE } from "../../../domain/board.ts";
-import { terminalColors } from "../../styles/colors.ts";
+import { colors } from "../../styles/colors.ts";
 
 const rows = Array.from({ length: SIZE }, (_, index) => index);
 const columns = Array.from({ length: SIZE }, (_, index) => index);
@@ -62,9 +62,7 @@ export function SudokuBoard({ game, badCells }: Props) {
                       badCells.has(index),
                       game.puzzle[index] !== 0,
                     )}
-                    backgroundColor={selected
-                      ? terminalColors.selected
-                      : undefined}
+                    backgroundColor={selected ? colors.accentSoft : undefined}
                   >
                     {value === 0 ? "·" : value}
                   </Text>
@@ -85,7 +83,7 @@ export function SudokuBoard({ game, badCells }: Props) {
 }
 
 function cellColor(conflict: boolean, given: boolean) {
-  if (conflict) return terminalColors.conflict;
-  if (given) return terminalColors.given;
-  return terminalColors.accent;
+  if (conflict) return colors.conflict;
+  if (given) return colors.givenText;
+  return colors.accent;
 }

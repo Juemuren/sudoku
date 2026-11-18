@@ -1,6 +1,6 @@
 import { Text } from "ink";
 import type { Difficulty } from "../../../domain/generator.ts";
-import { terminalColors } from "../../styles/colors.ts";
+import { colors } from "../../styles/colors.ts";
 
 const difficultyLabels: Record<Difficulty, string> = {
   easy: "简单",
@@ -26,7 +26,7 @@ export function Header({
   }`;
 
   return (
-    <Text bold color={terminalColors.accent}>
+    <Text bold color={colors.accent}>
       数独 {difficultyLabels[difficulty]} {time} 空格 {remaining} 提示{" "}
       {hintsUsed}
     </Text>
