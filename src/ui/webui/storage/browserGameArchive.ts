@@ -1,6 +1,6 @@
-import type { GameState } from "../../app/gameState.ts";
-import { parseGameArchive, restoreGame } from "../../app/gameLoad.ts";
-import { serializeGame } from "../../app/gameSave.ts";
+import type { GameState } from "../../../app/gameState.ts";
+import { parseGameArchive, restoreGame } from "../../../app/gameLoad.ts";
+import { serializeGame } from "../../../app/gameSave.ts";
 
 const MAX_BYTES = 64 * 1024;
 
