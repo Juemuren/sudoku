@@ -11,7 +11,7 @@ export function GameArchivePrompt({
 }) {
   if (busy) return <Text color={colors.warning}>处理中…</Text>;
   if (!dialog) return null;
-  return <Text color={colors.accent}>{promptText(dialog)}</Text>;
+  return <Text color={colors.actionText}>{promptText(dialog)}</Text>;
 }
 
 function promptText(dialog: NonNullable<GameArchiveDialog>): string {

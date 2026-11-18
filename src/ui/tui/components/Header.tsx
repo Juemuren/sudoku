@@ -26,9 +26,16 @@ export function Header({
   }`;
 
   return (
-    <Text bold color={colors.accent}>
-      数独 {difficultyLabels[difficulty]} {time} 空格 {remaining} 提示{" "}
-      {hintsUsed}
+    <Text>
+      <Text bold color={colors.eyebrow}>数独</Text>{"  "}
+      <Text color={colors.muted}>难度:</Text>
+      <Text bold color={colors.text}>{difficultyLabels[difficulty]}</Text>{"  "}
+      <Text color={colors.muted}>用时:</Text>
+      <Text bold color={colors.accent}>{time}</Text>{"  "}
+      <Text color={colors.muted}>空格:</Text>
+      <Text bold color={colors.success}>{remaining}</Text>{"  "}
+      <Text color={colors.muted}>提示:</Text>
+      <Text bold color={colors.warning}>{hintsUsed}</Text>
     </Text>
   );
 }

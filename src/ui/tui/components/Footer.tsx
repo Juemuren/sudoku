@@ -30,22 +30,32 @@ const gameHints: KeyHint[] = [
   { key: "Q", action: "退出" },
 ];
 
-function KeyGroup({ title, hints }: { title: string; hints: KeyHint[] }) {
+function KeyGroup({
+  title,
+  hints,
+  badgeColor,
+  keyColor,
+}: {
+  title: string;
+  hints: KeyHint[];
+  badgeColor: string;
+  keyColor: string;
+}) {
   return (
     <Box flexWrap="wrap" justifyContent="center" columnGap={2}>
       <Text
         bold
         color={colors.canvas}
-        backgroundColor={colors.accent}
+        backgroundColor={badgeColor}
       >
         {` ${title} `}
       </Text>
       {hints.map(({ key, action }) => (
         <Box key={key}>
-          <Text bold color={colors.accent}>
+          <Text bold color={keyColor}>
             [{key}]
           </Text>
-          <Text dimColor>{action}</Text>
+          <Text color={colors.muted}>{action}</Text>
         </Box>
       ))}
     </Box>
@@ -60,8 +70,18 @@ export function Footer({ message, solved, conflictCount }: Props) {
         {conflictCount ? `冲突格：${conflictCount}` : ""}
       </Text>
       <Box flexDirection="column" marginTop={1} width="100%">
-        <KeyGroup title="操作" hints={editingHints} />
-        <KeyGroup title="对局" hints={gameHints} />
+        <KeyGroup
+          title="操作"
+          hints={editingHints}
+          badgeColor={colors.accent}
+          keyColor={colors.accentText}
+        />
+        <KeyGroup
+          title="对局"
+          hints={gameHints}
+          badgeColor={colors.eyebrow}
+          keyColor={colors.actionText}
+        />
       </Box>
     </Box>
   );

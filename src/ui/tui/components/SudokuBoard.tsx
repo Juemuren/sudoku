@@ -45,11 +45,11 @@ type Props = {
 export function SudokuBoard({ game, badCells }: Props) {
   return (
     <>
-      <Text>{rowBorders[-1]}</Text>
+      <Text color={colors.gridBorder}>{rowBorders[-1]}</Text>
       {rows.map((row) => (
         <Fragment key={row}>
           <Text>
-            {columnSeparators[-1]}
+            <Text color={colors.gridBorder}>{columnSeparators[-1]}</Text>
             {columns.map((column) => {
               const index = row * SIZE + column;
               const value = game.board[index];
@@ -61,19 +61,20 @@ export function SudokuBoard({ game, badCells }: Props) {
                     color={cellColor(
                       badCells.has(index),
                       game.puzzle[index] !== 0,
+                      value === 0,
                     )}
                     backgroundColor={selected ? colors.accentSoft : undefined}
                   >
                     {value === 0 ? "·" : value}
                   </Text>
-                  <Text>
+                  <Text color={colors.gridBorder}>
                     {columnSeparators[column]}
                   </Text>
                 </Fragment>
               );
             })}
           </Text>
-          <Text>
+          <Text color={colors.gridBorder}>
             {rowBorders[row]}
           </Text>
         </Fragment>
@@ -82,8 +83,9 @@ export function SudokuBoard({ game, badCells }: Props) {
   );
 }
 
-function cellColor(conflict: boolean, given: boolean) {
+function cellColor(conflict: boolean, given: boolean, empty: boolean) {
   if (conflict) return colors.conflict;
   if (given) return colors.givenText;
-  return colors.accent;
+  if (empty) return colors.subtle;
+  return colors.accentText;
 }

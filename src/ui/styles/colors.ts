@@ -36,7 +36,7 @@ export const colors = {
   muted: palette.subtext0,
   subtle: palette.subtext0,
   accent: palette.blue,
-  accentText: palette.blue,
+  accentText: palette.teal,
   accentDark: palette.lavender,
   accentSoft: palette.surface1,
   accentHover: palette.surface0,
