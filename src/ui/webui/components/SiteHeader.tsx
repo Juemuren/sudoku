@@ -1,25 +1,14 @@
 import type { CSSProperties } from "react";
 import { colors } from "../../styles/colors.ts";
-import {
-  COMPACT_SCREEN_MAX_WIDTH,
-  MOBILE_SCREEN_MAX_WIDTH,
-  PAGE_MAX_WIDTH,
-} from "../layout.ts";
+import { MOBILE_SCREEN_MAX_WIDTH, PAGE_MAX_WIDTH } from "../layout.ts";
 
 export function SiteHeader({ width }: { width: number }) {
   return (
     <header style={headerStyle(width)}>
       <div style={brandStyle}>
         <span style={markStyle}>九</span>
-        <span>
-          数独{width > COMPACT_SCREEN_MAX_WIDTH && (
-            <span style={brandEnglishStyle}>/ SUDOKU</span>
-          )}
-        </span>
+        <span>数独 · Sudoku</span>
       </div>
-      {width > MOBILE_SCREEN_MAX_WIDTH && (
-        <span style={noteStyle}>一格一格，慢慢解开。</span>
-      )}
     </header>
   );
 }
@@ -54,15 +43,4 @@ const markStyle: CSSProperties = {
   color: colors.surface,
   background: colors.brand,
   fontSize: 20,
-};
-const brandEnglishStyle: CSSProperties = {
-  color: colors.brandSecondary,
-  fontSize: 13,
-  letterSpacing: ".17em",
-  fontWeight: 600,
-};
-const noteStyle: CSSProperties = {
-  color: colors.headerNote,
-  fontSize: 13,
-  letterSpacing: ".08em",
 };

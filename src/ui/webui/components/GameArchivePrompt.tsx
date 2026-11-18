@@ -11,11 +11,9 @@ export function GameArchivePrompt({ busy, onCancel, onConfirm }: Props) {
         style={dialogStyle}
         role="alertdialog"
         aria-modal="true"
-        aria-labelledby="dialog-title"
+        aria-label="加载存档"
         aria-describedby="dialog-description"
       >
-        <p style={eyebrowStyle}>PLEASE CONFIRM</p>
-        <h2 style={headingStyle} id="dialog-title">加载这份存档？</h2>
         <p style={descriptionStyle} id="dialog-description">
           当前棋盘会被文件中的进度替换。请先保存需要保留的进度。
         </p>
@@ -61,18 +59,6 @@ const dialogStyle: CSSProperties = {
   padding: 28,
   borderRadius: 14,
   boxShadow: `0 20px 60px ${colors.dialogShadow}`,
-};
-const eyebrowStyle: CSSProperties = {
-  margin: "0 0 8px",
-  fontSize: 11,
-  fontWeight: 700,
-  letterSpacing: ".23em",
-  color: colors.eyebrow,
-};
-const headingStyle: CSSProperties = {
-  margin: "0 0 12px",
-  fontSize: 23,
-  letterSpacing: "-.035em",
 };
 const descriptionStyle: CSSProperties = {
   color: colors.muted,

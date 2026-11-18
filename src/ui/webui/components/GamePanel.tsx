@@ -56,7 +56,6 @@ export function GamePanel({
     <section style={{ minWidth: 0 }} aria-label="数独游戏">
       <div style={headingStyle(width)}>
         <div>
-          <p style={eyebrowStyle}>DAILY PLAY</p>
           <h1
             style={{
               margin: 0,
@@ -65,7 +64,7 @@ export function GamePanel({
               lineHeight: 1.2,
             }}
           >
-            数独练习
+            数独
           </h1>
         </div>
         <div style={difficultyStyle(width)} aria-label="选择难度">
@@ -176,13 +175,6 @@ export function GamePanel({
   );
 }
 
-const eyebrowStyle: CSSProperties = {
-  margin: "0 0 8px",
-  fontSize: 11,
-  fontWeight: 700,
-  letterSpacing: ".23em",
-  color: colors.eyebrow,
-};
 function headingStyle(width: number): CSSProperties {
   return {
     display: width <= MOBILE_SCREEN_MAX_WIDTH ? "block" : "flex",
