@@ -17,23 +17,22 @@
     "@std/path": "jsr:@std/path@^1.1.4"
   },
   "tasks": {
-    "start": "deno run -A src/ui/tui/index.tsx",
-    "dev": "deno run -A --watch src/ui/tui/index.tsx",
-    "web:dev": "deno run -A npm:vite@7.2.2 --config src/ui/webui/vite.config.ts",
-    "web:build": "deno run -A npm:vite@7.2.2 build --config src/ui/webui/vite.config.ts",
-    "web:preview": "deno run -A npm:vite@7.2.2 preview --config src/ui/webui/vite.config.ts",
-    "check": "deno check src/ui/tui/index.tsx src/ui/webui/main.tsx tests/*.test.ts tests/tui/*.test.ts",
+    "tui:dev": "deno run -A --watch src/ui/tui/index.tsx",
+    "tui:build": "deno compile -A --include src/ui/tui/storage/gameValidationWorker.ts --output dist/sudoku src/ui/tui/index.tsx",
+    "tui:preview": "deno run -A src/ui/tui/index.tsx",
+    "webui:dev": "deno run -A npm:vite@7.2.2 --config src/ui/webui/vite.config.ts",
+    "webui:build": "deno run -A npm:vite@7.2.2 build --config src/ui/webui/vite.config.ts",
+    "webui:preview": "deno run -A npm:vite@7.2.2 preview --config src/ui/webui/vite.config.ts",
+    "check": "deno check src/**/*.ts src/**/*.tsx tests/**/*.ts",
     "test": "deno test -A tests/",
     "lint": "deno lint",
-    "fmt": "deno fmt",
-    "build": "deno compile -A --include src/ui/tui/storage/gameValidationWorker.ts --output dist/sudoku src/ui/tui/index.tsx"
+    "fmt": "deno fmt"
   },
   "fmt": {
     "lineWidth": 80,
-    "exclude": [".tmp", "dist"]
+    "include": ["src/", "tests/", "docs/", "deno.json", "README.md"]
   },
   "lint": {
-    "exclude": [".tmp", "dist"]
-  },
-  "exclude": [".tmp", "dist"]
+    "include": ["src/", "tests/"]
+  }
 }

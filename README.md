@@ -2,21 +2,9 @@
 
 使用 TypeScript 实现的数独游戏，提供终端界面和浏览器界面。
 
-## 运行
-
-需要 Deno 2.9 或更新版本。
-
-```sh
-deno install
-```
+## 界面
 
 ### 终端界面
-
-```sh
-deno task start
-```
-
-该命令会启动全屏终端应用。
 
 界面大致为：
 
@@ -70,49 +58,17 @@ deno task start
 
 ### 浏览器界面
 
-```sh
-deno task web:dev
-```
-
-打开 Vite 输出的本地地址。
-
-## 构建
-
-### TUI
+<!-- TODO 使用实际界面的图片 -->
 
 ```sh
-deno task build
+deno task webui:dev
 ```
 
-- Windows 产物为 `dist/sudoku.exe`
-- Linux / macOS 产物为 `dist/sudoku`
+该命令会启动本地开发服务器，需要在浏览器中打开输出的地址。
 
-### WebUI
+## 文档
 
-```sh
-deno task web:build
-deno task web:preview
-```
-
-构建产物在 `dist/webui/`。
-
-## 检查和测试
-
-使用 Deno 进行类型检查
-
-```sh
-deno task check
-```
-
-使用 Deno 进行静态检查和格式化
-
-```sh
-deno task lint
-deno task fmt
-```
-
-使用 Deno 进行测试
-
-```sh
-deno task test
-```
+- 技术栈文档 [TECH.md](docs/TECH.md)
+- 开发文档 [DEV.md](docs/DEV.md)
+- 架构文档 [ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- 规划文档 [PLAN.md](docs/PLAN.md)
