@@ -2,8 +2,18 @@ import type { GameState } from "../../../app/gameState.ts";
 import type { gameStats } from "../../../app/gameStats.ts";
 import type { Difficulty } from "../../../domain/generator.ts";
 import type { CSSProperties } from "react";
+import { SIZE } from "../../../domain/board.ts";
 import { colors } from "../../styles/colors.ts";
+import {
+  COMPACT_SCREEN_MAX_WIDTH,
+  MOBILE_SCREEN_MAX_WIDTH,
+  NUMBER_PAD_MAX_WIDTH,
+} from "../layout.ts";
 import { SudokuBoard } from "./SudokuBoard.tsx";
+
+const SECONDS_PER_MINUTE = 60;
+const TIME_FIELD_WIDTH = 2;
+const NUMBER_PAD_COLUMNS = SIZE + 1; // Digits and the clear button.
 
 type Props = {
   game: GameState;
@@ -24,9 +34,9 @@ const difficulties: { value: Difficulty; label: string }[] = [
 ];
 
 function formatTime(seconds: number): string {
-  const minutes = Math.floor(seconds / 60);
-  return `${String(minutes).padStart(2, "0")}:${
-    String(seconds % 60).padStart(2, "0")
+  const minutes = Math.floor(seconds / SECONDS_PER_MINUTE);
+  return `${String(minutes).padStart(TIME_FIELD_WIDTH, "0")}:${
+    String(seconds % SECONDS_PER_MINUTE).padStart(TIME_FIELD_WIDTH, "0")
   }`;
 }
 
@@ -50,7 +60,7 @@ export function GamePanel({
           <h1
             style={{
               margin: 0,
-              fontSize: width <= 650 ? 30 : 38,
+              fontSize: width <= MOBILE_SCREEN_MAX_WIDTH ? 30 : 38,
               letterSpacing: "-.045em",
               lineHeight: 1.2,
             }}
@@ -125,7 +135,7 @@ export function GamePanel({
       </p>
 
       <div style={numberPadStyle(width)} aria-label="输入数字">
-        {Array.from({ length: 9 }, (_, index) => (
+        {Array.from({ length: SIZE }, (_, index) => (
           <button
             key={index}
             type="button"
@@ -138,7 +148,7 @@ export function GamePanel({
         <button
           style={{
             ...numberButtonStyle(width),
-            fontSize: width <= 420 ? 10 : 12,
+            fontSize: width <= COMPACT_SCREEN_MAX_WIDTH ? 10 : 12,
             fontWeight: 600,
           }}
           type="button"
@@ -175,7 +185,7 @@ const eyebrowStyle: CSSProperties = {
 };
 function headingStyle(width: number): CSSProperties {
   return {
-    display: width <= 650 ? "block" : "flex",
+    display: width <= MOBILE_SCREEN_MAX_WIDTH ? "block" : "flex",
     alignItems: "end",
     justifyContent: "space-between",
     gap: 16,
@@ -184,9 +194,9 @@ function headingStyle(width: number): CSSProperties {
 }
 function difficultyStyle(width: number): CSSProperties {
   return {
-    display: width <= 650 ? "inline-flex" : "flex",
+    display: width <= MOBILE_SCREEN_MAX_WIDTH ? "inline-flex" : "flex",
     padding: 4,
-    marginTop: width <= 650 ? 18 : 0,
+    marginTop: width <= MOBILE_SCREEN_MAX_WIDTH ? 18 : 0,
     background: colors.picker,
     borderRadius: 10,
     whiteSpace: "nowrap",
@@ -230,9 +240,9 @@ const statValueStyle: CSSProperties = {
 function numberPadStyle(width: number): CSSProperties {
   return {
     display: "grid",
-    gridTemplateColumns: "repeat(10, 1fr)",
-    gap: width <= 420 ? 3 : 6,
-    maxWidth: 580,
+    gridTemplateColumns: `repeat(${NUMBER_PAD_COLUMNS}, 1fr)`,
+    gap: width <= COMPACT_SCREEN_MAX_WIDTH ? 3 : 6,
+    maxWidth: NUMBER_PAD_MAX_WIDTH,
     margin: "auto",
   };
 }
@@ -242,9 +252,9 @@ function numberButtonStyle(width: number): CSSProperties {
     border: `1px solid ${colors.controlBorder}`,
     background: colors.surface,
     color: colors.numberText,
-    borderRadius: width <= 420 ? 5 : 8,
+    borderRadius: width <= COMPACT_SCREEN_MAX_WIDTH ? 5 : 8,
     aspectRatio: "1",
-    fontSize: width <= 420 ? 16 : 20,
+    fontSize: width <= COMPACT_SCREEN_MAX_WIDTH ? 16 : 20,
     fontWeight: 700,
     fontFamily: "inherit",
     cursor: "pointer",
@@ -262,8 +272,8 @@ function actionButtonStyle(width: number): CSSProperties {
     color: colors.actionText,
     background: colors.actionSurface,
     borderRadius: 8,
-    minWidth: width <= 650 ? 0 : 120,
-    flex: width <= 650 ? 1 : undefined,
+    minWidth: width <= MOBILE_SCREEN_MAX_WIDTH ? 0 : 120,
+    flex: width <= MOBILE_SCREEN_MAX_WIDTH ? 1 : undefined,
     padding: "11px 14px",
     fontSize: 17,
     fontFamily: "inherit",

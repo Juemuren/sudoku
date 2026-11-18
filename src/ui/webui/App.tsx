@@ -17,6 +17,15 @@ import { Sidebar } from "./components/Sidebar.tsx";
 import { SiteHeader } from "./components/SiteHeader.tsx";
 import { useGameArchive } from "./hooks/useGameArchive.ts";
 import { useGameKeyboard } from "./hooks/useGameKeyboard.ts";
+import {
+  CLOCK_TICK_MS,
+  GAME_COLUMN_WIDTH,
+  MOBILE_SCREEN_MAX_WIDTH,
+  PAGE_MAX_WIDTH,
+  SIDEBAR_COLUMN_WIDTH,
+  STACKED_CONTENT_MAX_WIDTH,
+  STACKED_LAYOUT_MAX_WIDTH,
+} from "./layout.ts";
 
 export function App() {
   const [width, setWidth] = useState(() => globalThis.innerWidth);
@@ -25,7 +34,10 @@ export function App() {
   const gameArchive = useGameArchive(game, setGame);
 
   useEffect(() => {
-    const timer = globalThis.setInterval(() => setNow(Date.now()), 1000);
+    const timer = globalThis.setInterval(
+      () => setNow(Date.now()),
+      CLOCK_TICK_MS,
+    );
     return () => globalThis.clearInterval(timer);
   }, []);
 
@@ -97,19 +109,19 @@ const shellStyle: CSSProperties = {
 function layoutStyle(width: number): CSSProperties {
   return {
     boxSizing: "border-box",
-    maxWidth: 1220,
+    maxWidth: PAGE_MAX_WIDTH,
     margin: "0 auto",
-    padding: width <= 650
+    padding: width <= MOBILE_SCREEN_MAX_WIDTH
       ? "27px 14px 50px"
-      : width <= 950
+      : width <= STACKED_LAYOUT_MAX_WIDTH
       ? "35px 30px 70px"
       : "48px 30px 70px",
     display: "grid",
-    gridTemplateColumns: width <= 950
-      ? "minmax(0, 650px)"
-      : "minmax(0, 696px) 350px",
+    gridTemplateColumns: width <= STACKED_LAYOUT_MAX_WIDTH
+      ? `minmax(0, ${STACKED_CONTENT_MAX_WIDTH}px)`
+      : `minmax(0, ${GAME_COLUMN_WIDTH}px) ${SIDEBAR_COLUMN_WIDTH}px`,
     justifyContent: "center",
-    gap: width <= 650 ? 30 : 40,
+    gap: width <= MOBILE_SCREEN_MAX_WIDTH ? 30 : 40,
     alignItems: "start",
   };
 }

@@ -1,6 +1,13 @@
 import type { GameState } from "../../../app/gameState.ts";
 import type { CSSProperties } from "react";
+import { columnOf, rowOf, SIZE } from "../../../domain/board.ts";
 import { colors } from "../../styles/colors.ts";
+import {
+  BOARD_MAX_WIDTH,
+  BOX_SIZE,
+  COMPACT_SCREEN_MAX_WIDTH,
+  MOBILE_SCREEN_MAX_WIDTH,
+} from "../layout.ts";
 
 type Props = {
   game: GameState;
@@ -15,13 +22,13 @@ export function SudokuBoard({ game, badCells, width, onSelectCell }: Props) {
       style={{
         display: "flex",
         justifyContent: "center",
-        paddingTop: width <= 650 ? 18 : 26,
+        paddingTop: width <= MOBILE_SCREEN_MAX_WIDTH ? 18 : 26,
       }}
     >
       <div style={boardStyle} role="grid" aria-label="数独棋盘">
         {game.board.map((value, index) => {
-          const row = Math.floor(index / 9);
-          const column = index % 9;
+          const row = rowOf(index);
+          const column = columnOf(index);
           const given = game.puzzle[index] !== 0;
           const selected = game.selected === index;
           return (
@@ -40,10 +47,11 @@ export function SudokuBoard({ game, badCells, width, onSelectCell }: Props) {
                 given,
                 selected,
                 conflict: badCells.has(index),
-                boxRight: column === 2 || column === 5,
-                boxBottom: row === 2 || row === 5,
-                lastColumn: column === 8,
-                lastRow: row === 8,
+                boxRight: (column + 1) % BOX_SIZE === 0 &&
+                  column < SIZE - 1,
+                boxBottom: (row + 1) % BOX_SIZE === 0 && row < SIZE - 1,
+                lastColumn: column === SIZE - 1,
+                lastRow: row === SIZE - 1,
               })}
               onClick={() => onSelectCell(index)}
             >
@@ -58,11 +66,11 @@ export function SudokuBoard({ game, badCells, width, onSelectCell }: Props) {
 
 const boardStyle: CSSProperties = {
   boxSizing: "border-box",
-  width: "min(100%, 540px)",
+  width: `min(100%, ${BOARD_MAX_WIDTH}px)`,
   aspectRatio: "1",
   display: "grid",
-  gridTemplateColumns: "repeat(9, 1fr)",
-  gridTemplateRows: "repeat(9, 1fr)",
+  gridTemplateColumns: `repeat(${SIZE}, 1fr)`,
+  gridTemplateRows: `repeat(${SIZE}, 1fr)`,
   border: `2px solid ${colors.gridBorder}`,
   background: colors.surface,
   boxShadow: `0 12px 30px ${colors.boardShadow}`,
@@ -104,7 +112,9 @@ function cellStyle(state: {
       ? colors.givenText
       : colors.accentText,
     fontFamily: "inherit",
-    fontSize: state.width <= 420 ? 19 : "clamp(18px, 3vw, 28px)",
+    fontSize: state.width <= COMPACT_SCREEN_MAX_WIDTH
+      ? 19
+      : "clamp(18px, 3vw, 28px)",
     fontWeight: state.given ? 700 : 600,
     lineHeight: 1,
     fontVariantNumeric: "tabular-nums",

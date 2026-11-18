@@ -1,5 +1,9 @@
 import type { CSSProperties, RefObject } from "react";
 import { colors } from "../../styles/colors.ts";
+import {
+  MOBILE_SCREEN_MAX_WIDTH,
+  STACKED_LAYOUT_MAX_WIDTH,
+} from "../layout.ts";
 
 type Props = {
   busy: boolean;
@@ -18,7 +22,8 @@ export function Sidebar(
       style={{
         display: "grid",
         gap: 20,
-        gridTemplateColumns: width <= 650 || width > 950
+        gridTemplateColumns: width <= MOBILE_SCREEN_MAX_WIDTH ||
+            width > STACKED_LAYOUT_MAX_WIDTH
           ? "1fr"
           : "repeat(2, minmax(0, 1fr))",
       }}
@@ -99,7 +104,7 @@ function cardStyle(width: number): CSSProperties {
     background: colors.surface,
     border: `1px solid ${colors.cardBorder}`,
     borderRadius: 15,
-    padding: width <= 650 ? 22 : 26,
+    padding: width <= MOBILE_SCREEN_MAX_WIDTH ? 22 : 26,
     boxShadow: `0 6px 24px ${colors.cardShadow}`,
   };
 }
