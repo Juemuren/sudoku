@@ -1,5 +1,5 @@
 import { conflicts, isSolved } from "../domain/rules.ts";
-import type { GameState } from "./gameState.ts";
+import { elapsedMilliseconds, type GameState } from "./gameState.ts";
 
 export function gameStats(game: GameState, now: number) {
   const badCells = conflicts(game.board);
@@ -7,9 +7,6 @@ export function gameStats(game: GameState, now: number) {
     badCells,
     solved: isSolved(game.board),
     remaining: game.board.filter((value) => value === 0).length,
-    elapsedSeconds: Math.max(
-      0,
-      Math.floor((game.elapsedBeforeStart + now - game.startedAt) / 1000),
-    ),
+    elapsedSeconds: Math.floor(elapsedMilliseconds(game, now) / 1000),
   };
 }

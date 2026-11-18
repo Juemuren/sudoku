@@ -77,6 +77,7 @@ export function enterValue(state: GameState, value: number): GameState {
   return {
     ...state,
     board,
+    ...clockAfterBoardChange(state, board),
     history: [...state.history, snapshot(state)],
     message: entryMessage(board, value),
   };
@@ -100,6 +101,7 @@ export function requestHint(state: GameState): GameState {
   return {
     ...state,
     board,
+    ...clockAfterBoardChange(state, board),
     history: [...state.history, snapshot(state)],
     selected: index,
     hintsUsed: state.hintsUsed + 1,
@@ -125,7 +127,37 @@ export function undo(state: GameState): GameState {
   return {
     ...state,
     ...previous,
+    ...clockAfterBoardChange(state, previous.board),
     history: state.history.slice(0, -1),
     message: "已撤销。",
   };
+}
+
+export function elapsedMilliseconds(state: GameState, now: number): number {
+  return Math.max(
+    0,
+    state.elapsedBeforeStart +
+      (isSolved(state.board) ? 0 : now - state.startedAt),
+  );
+}
+
+function clockAfterBoardChange(
+  state: GameState,
+  board: Board,
+): Pick<GameState, "startedAt" | "elapsedBeforeStart"> {
+  const wasSolved = isSolved(state.board);
+  const solved = isSolved(board);
+  if (wasSolved === solved) {
+    return {
+      startedAt: state.startedAt,
+      elapsedBeforeStart: state.elapsedBeforeStart,
+    };
+  }
+  const now = Date.now();
+  return solved
+    ? {
+      startedAt: state.startedAt,
+      elapsedBeforeStart: elapsedMilliseconds(state, now),
+    }
+    : { startedAt: now, elapsedBeforeStart: state.elapsedBeforeStart };
 }

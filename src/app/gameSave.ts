@@ -1,4 +1,4 @@
-import type { GameState } from "./gameState.ts";
+import { elapsedMilliseconds, type GameState } from "./gameState.ts";
 import type { GameStore } from "./gameStore.ts";
 import type { GameArchive } from "./gameArchive.ts";
 
@@ -28,10 +28,7 @@ export function serializeGame(state: GameState, now = Date.now()): string {
         difficulty: state.difficulty,
         selected: state.selected,
         hintsUsed: state.hintsUsed,
-        elapsedMilliseconds: Math.max(
-          0,
-          Math.floor(state.elapsedBeforeStart + now - state.startedAt),
-        ),
+        elapsedMilliseconds: Math.floor(elapsedMilliseconds(state, now)),
       },
     } satisfies GameArchive,
     null,
