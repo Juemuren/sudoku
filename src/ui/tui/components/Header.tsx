@@ -8,6 +8,8 @@ const difficultyLabels: Record<Difficulty, string> = {
   hard: "困难",
 };
 const titleDivider = " / ";
+const SECONDS_PER_MINUTE = 60;
+const TIME_FIELD_WIDTH = 2;
 
 type Props = {
   difficulty: Difficulty;
@@ -24,8 +26,13 @@ export function Header({
   hintsUsed,
   compact,
 }: Props) {
-  const time = `${String(Math.floor(elapsedSeconds / 60)).padStart(2, "0")}:${
-    String(elapsedSeconds % 60).padStart(2, "0")
+  const time = `${
+    String(Math.floor(elapsedSeconds / SECONDS_PER_MINUTE)).padStart(
+      TIME_FIELD_WIDTH,
+      "0",
+    )
+  }:${
+    String(elapsedSeconds % SECONDS_PER_MINUTE).padStart(TIME_FIELD_WIDTH, "0")
   }`;
 
   return (

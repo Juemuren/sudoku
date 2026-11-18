@@ -1,6 +1,8 @@
 import { Box, Text } from "ink";
 import type { GameState } from "../../../app/gameState.ts";
+import { columnOf, rowOf } from "../../../domain/board.ts";
 import type { GameArchiveDialog } from "../hooks/useGameArchive.ts";
+import { BOARD_HEIGHT, KEY_GROUP_GAP, KEY_LABEL_WIDTH } from "../layout.ts";
 import { colors } from "../../styles/colors.ts";
 
 const blankLine = " ";
@@ -20,14 +22,12 @@ function Label({ children }: { children: string }) {
 function KeyAction({
   keyLabel,
   action,
-  width,
 }: {
   keyLabel: string;
   action: string;
-  width?: number;
 }) {
   return (
-    <Box width={width} flexShrink={0}>
+    <Box flexShrink={0}>
       <Text color={colors.accentText}>{keyLabel}</Text>
       <Text color={colors.muted}>{` ${action}`}</Text>
     </Box>
@@ -37,7 +37,7 @@ function KeyAction({
 function KeyLine({ keyLabel, action }: { keyLabel: string; action: string }) {
   return (
     <Box width="100%">
-      <Box width={8} flexShrink={0}>
+      <Box width={KEY_LABEL_WIDTH} flexShrink={0}>
         <Text color={colors.accentText}>{keyLabel}</Text>
       </Box>
       <Text color={colors.muted}>{action}</Text>
@@ -51,7 +51,7 @@ function KeyRow({
   items: { keyLabel: string; action: string }[];
 }) {
   return (
-    <Box width="100%" columnGap={3}>
+    <Box width="100%" columnGap={KEY_GROUP_GAP}>
       {items.map(({ keyLabel, action }) => (
         <KeyAction key={keyLabel} keyLabel={keyLabel} action={action} />
       ))}
@@ -67,8 +67,8 @@ export function Sidebar(
   }
   if (compact) return null;
 
-  const row = Math.floor(game.selected / 9) + 1;
-  const column = game.selected % 9 + 1;
+  const row = rowOf(game.selected) + 1;
+  const column = columnOf(game.selected) + 1;
   const cellState = badCells.has(game.selected)
     ? "冲突"
     : game.puzzle[game.selected] !== 0
@@ -76,7 +76,7 @@ export function Sidebar(
     : "可填写";
 
   return (
-    <Box flexDirection="column" width="100%" height={13}>
+    <Box flexDirection="column" width="100%" height={BOARD_HEIGHT}>
       <Label>操作</Label>
       <KeyLine keyLabel="←↑↓→" action="移动" />
       <KeyLine keyLabel="1–9" action="填入" />
@@ -142,7 +142,11 @@ function ArchivePanel({
     : "保存对局";
 
   return (
-    <Box flexDirection="column" width="100%" height={compact ? undefined : 13}>
+    <Box
+      flexDirection="column"
+      width="100%"
+      height={compact ? undefined : BOARD_HEIGHT}
+    >
       <Label>{title}</Label>
       <Text>{blankLine}</Text>
       <Text color={colors.muted}>

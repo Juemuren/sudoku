@@ -1,4 +1,5 @@
 import { Box, Text } from "ink";
+import { KEY_GROUP_GAP, SECTION_GAP } from "../layout.ts";
 import { colors } from "../../styles/colors.ts";
 
 type Props = {
@@ -16,7 +17,7 @@ function HintRow({
   items: { keyLabel: string; action: string }[];
 }) {
   return (
-    <Box columnGap={3}>
+    <Box columnGap={KEY_GROUP_GAP}>
       {items.map(({ keyLabel, action }) => (
         <Box key={keyLabel}>
           <Text color={colors.accentText}>{keyLabel}</Text>
@@ -46,7 +47,7 @@ export function Footer({
       {compact && (collapsed && !showHelp
         ? <Text color={colors.muted}>? 查看按键</Text>
         : (
-          <Box flexDirection="column" marginTop={1}>
+          <Box flexDirection="column" marginTop={SECTION_GAP}>
             <HintRow
               items={[
                 { keyLabel: "←↑↓→", action: "移动" },

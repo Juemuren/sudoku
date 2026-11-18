@@ -9,9 +9,9 @@ const columns = Array.from({ length: SIZE }, (_, index) => index);
 const topBorder = "┏━━━━━━━┳━━━━━━━┳━━━━━━━┓";
 const midBorder = "┣━━━━━━━╋━━━━━━━╋━━━━━━━┫";
 const btmBorder = "┗━━━━━━━┻━━━━━━━┻━━━━━━━┛";
-const topSeparator = "┃ ";
-const midSeparator = " ┃ ";
-const btmSeparator = " ┃";
+const lftSeparator = "┃ ";
+const ctrSeparator = " ┃ ";
+const rgtSeparator = " ┃";
 const rowBorders: Partial<Record<number, string>> = {
   "-1": topBorder,
   "0": "",
@@ -25,16 +25,16 @@ const rowBorders: Partial<Record<number, string>> = {
   "8": btmBorder,
 };
 const columnSeparators: Record<number, string> = {
-  "-1": topSeparator,
+  "-1": lftSeparator,
   "0": " ",
   "1": " ",
-  "2": midSeparator,
+  "2": ctrSeparator,
   "3": " ",
   "4": " ",
-  "5": midSeparator,
+  "5": ctrSeparator,
   "6": " ",
   "7": " ",
-  "8": btmSeparator,
+  "8": rgtSeparator,
 };
 
 type Props = {

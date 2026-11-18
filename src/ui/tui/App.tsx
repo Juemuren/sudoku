@@ -1,84 +1,31 @@
-import { Box, Text, useApp, useInput, useWindowSize } from "ink";
-import { useEffect, useState } from "react";
-import {
-  type Direction,
-  enterValue,
-  type GameState,
-  moveSelection,
-  newGame,
-  requestHint,
-  undo,
-} from "../../app/gameState.ts";
+import { Box, useWindowSize } from "ink";
 import { gameStats } from "../../app/gameStats.ts";
-import type { Difficulty } from "../../domain/generator.ts";
-import { colors } from "../styles/colors.ts";
 import { Footer } from "./components/Footer.tsx";
 import { Header } from "./components/Header.tsx";
+import { HorizontalRule, VerticalRule } from "./components/Rules.tsx";
 import { Sidebar } from "./components/Sidebar.tsx";
 import { SudokuBoard } from "./components/SudokuBoard.tsx";
-import { useGameArchive } from "./hooks/useGameArchive.ts";
+import { useGameSession } from "./hooks/useGameSession.ts";
+import {
+  BOARD_HEIGHT,
+  BOARD_WIDTH,
+  CONTENT_WIDTH,
+  EXPANDED_COMPACT_MIN_ROWS,
+  RULE_GAP,
+  SCREEN_PADDING,
+  SCREEN_WIDTH,
+  SECTION_GAP,
+  SIDEBAR_WIDTH,
+} from "./layout.ts";
 
 export function App() {
-  const { exit } = useApp();
   const { columns, rows } = useWindowSize();
-  const [game, setGame] = useState<GameState>(() => newGame());
-  const [now, setNow] = useState(Date.now());
-  const [showHelp, setShowHelp] = useState(false);
-  const gameArchive = useGameArchive(game, setGame);
-
-  useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  useInput((input, key) => {
-    if (gameArchive.active || input === "s" || input === "l") return;
-    gameArchive.clearStatus();
-    if (input === "?" && columns < 64 && rows < 22) {
-      setShowHelp((value) => !value);
-      return;
-    }
-    if (input === "q" || (key.ctrl && input === "c")) {
-      exit();
-      return;
-    }
-    const direction = arrowDirection(key);
-    if (direction) {
-      setGame((state) => moveSelection(state, direction));
-      return;
-    }
-    if (/^[1-9]$/.test(input)) {
-      setGame((state) => enterValue(state, Number(input)));
-      return;
-    }
-    if (input === "0" || key.backspace || key.delete) {
-      setGame((state) => enterValue(state, 0));
-      return;
-    }
-    if (input === "h") {
-      setGame(requestHint);
-      return;
-    }
-    if (input === "u") {
-      setGame(undo);
-      return;
-    }
-    const difficulty = difficultyKeys[input];
-    if (difficulty) {
-      gameArchive.forgetLocation();
-      setGame(newGame(difficulty));
-      return;
-    }
-    if (input === "n") {
-      gameArchive.forgetLocation();
-      setGame((state) => newGame(state.difficulty));
-    }
-  });
-
+  const { game, now, showHelp, archive } = useGameSession(columns, rows);
   const { badCells, solved, remaining, elapsedSeconds } = gameStats(game, now);
-  const compact = columns < 64;
-  const collapsed = compact && rows < 22;
+  const compact = columns < SCREEN_WIDTH;
+  const collapsed = compact && rows < EXPANDED_COMPACT_MIN_ROWS;
   const showBoard = !(collapsed && showHelp);
+
   return (
     <Box
       width={columns}
@@ -89,8 +36,8 @@ export function App() {
       <Box
         flexDirection="column"
         alignItems="center"
-        width={Math.min(columns, 64)}
-        padding={1}
+        width={Math.min(columns, SCREEN_WIDTH)}
+        padding={SCREEN_PADDING}
       >
         <Header
           difficulty={game.difficulty}
@@ -99,76 +46,52 @@ export function App() {
           hintsUsed={game.hintsUsed}
           compact={compact}
         />
-        {!compact && <Text color={colors.gridBorder}>{"─".repeat(62)}</Text>}
+        {!compact && <HorizontalRule width={CONTENT_WIDTH} />}
         {showBoard && (
           <Box
             width="100%"
             justifyContent="center"
-            marginTop={compact ? 0 : 1}
-            marginBottom={1}
+            marginTop={compact ? 0 : SECTION_GAP}
+            marginBottom={SECTION_GAP}
           >
-            <Box width={25} flexShrink={0} flexDirection="column">
+            <Box width={BOARD_WIDTH} flexShrink={0} flexDirection="column">
               <SudokuBoard game={game} badCells={badCells} />
             </Box>
             {!compact && (
               <>
-                <Box marginX={2} flexDirection="column">
-                  {Array.from(
-                    { length: 13 },
-                    (_, index) => (
-                      <Text key={index} color={colors.gridBorder}>│</Text>
-                    ),
-                  )}
+                <Box marginX={RULE_GAP}>
+                  <VerticalRule height={BOARD_HEIGHT} />
                 </Box>
-                <Box width={32} flexDirection="column">
+                <Box width={SIDEBAR_WIDTH} flexDirection="column">
                   <Sidebar
                     game={game}
                     badCells={badCells}
-                    dialog={gameArchive.dialog}
-                    busy={gameArchive.busy}
+                    dialog={archive.dialog}
+                    busy={archive.busy}
                   />
                 </Box>
               </>
             )}
           </Box>
         )}
-        {compact && gameArchive.active && (
+        {compact && archive.active && (
           <Sidebar
             game={game}
             badCells={badCells}
-            dialog={gameArchive.dialog}
-            busy={gameArchive.busy}
+            dialog={archive.dialog}
+            busy={archive.busy}
             compact
           />
         )}
         <Footer
-          message={gameArchive.status ||
-            (gameArchive.active ? " " : game.message)}
+          message={archive.status || (archive.active ? " " : game.message)}
           solved={solved}
           conflictCount={badCells.size}
-          compact={compact && !gameArchive.active}
+          compact={compact && !archive.active}
           showHelp={showHelp}
           collapsed={collapsed}
         />
       </Box>
     </Box>
   );
-}
-
-const difficultyKeys: Record<string, Difficulty | undefined> = {
-  e: "easy",
-  m: "medium",
-  d: "hard",
-};
-
-function arrowDirection(key: {
-  upArrow: boolean;
-  downArrow: boolean;
-  leftArrow: boolean;
-  rightArrow: boolean;
-}): Direction | undefined {
-  if (key.upArrow) return "up";
-  if (key.downArrow) return "down";
-  if (key.leftArrow) return "left";
-  if (key.rightArrow) return "right";
 }
