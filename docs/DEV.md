@@ -28,10 +28,10 @@ flowchart LR
 
   subgraph Shared[Shared]
     STATE[Game State]
-    BOARD[Board Model]
+    BOARD[Board]
     RULES[Rules]
     VAL[Validation]
-    GEN[Puzzle Generator]
+    GEN[Generator]
     AUTO[Auto Solver<br>（部分实现）]
     HUMAN[Human Solver<br>（尚未实现）]
     STORE[Save / Load]

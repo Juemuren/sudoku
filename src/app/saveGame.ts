@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { CELL_COUNT } from "../domain/board.ts";
-import { conflicts } from "../domain/rules.ts";
-import { solve } from "../domain/solver.ts";
+import { assertCluesPreserved, validatePuzzle } from "../domain/validation.ts";
 import type { GameState } from "./gameState.ts";
 
 const boardSchema = z.array(z.number().int().min(0).max(9)).length(CELL_COUNT);
@@ -56,21 +55,10 @@ export function parseSavedGame(json: string): SavedGame {
     const issue = parsed.error.issues[0];
     throw new Error(`存档格式错误：${issue?.path.join(".") || "根对象"}。`);
   }
-  const { puzzle, board } = parsed.data.game;
-  for (let index = 0; index < CELL_COUNT; index++) {
-    if (puzzle[index] !== 0 && board[index] !== puzzle[index]) {
-      throw new Error(`存档修改了第 ${index + 1} 格的题目数字。`);
-    }
-  }
-  if (conflicts(puzzle).size > 0) throw new Error("存档题目中的给定数字冲突。");
   return parsed.data;
 }
 
 export function restoreSavedGame(saved: SavedGame): GameState {
-  const solutions = solve(saved.game.puzzle, 2);
-  const solution = solutions[0];
-  if (!solution) throw new Error("存档题目无解。");
-  if (solutions.length > 1) throw new Error("存档题目有多个解。");
   const {
     puzzle,
     board,
@@ -79,6 +67,8 @@ export function restoreSavedGame(saved: SavedGame): GameState {
     hintsUsed,
     elapsedMilliseconds,
   } = saved.game;
+  assertCluesPreserved(puzzle, board);
+  const solution = validatePuzzle(puzzle);
   return {
     puzzle: [...puzzle],
     board: [...board],

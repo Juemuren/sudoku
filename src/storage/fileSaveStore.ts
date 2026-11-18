@@ -1,5 +1,6 @@
 import { dirname, resolve } from "@std/path";
 import type { GameState } from "../app/gameState.ts";
+import type { SaveStore } from "../app/saveLoad.ts";
 import { parseSavedGame, serializeGame } from "../app/saveGame.ts";
 import { verifySavedGame } from "./verifySavedGame.ts";
 
@@ -57,3 +58,9 @@ export async function loadFromFile(path: string): Promise<GameState> {
   }
   return verifySavedGame(parseSavedGame(data));
 }
+
+export const fileSaveStore: SaveStore = {
+  exists: fileExists,
+  save: saveToFile,
+  load: loadFromFile,
+};

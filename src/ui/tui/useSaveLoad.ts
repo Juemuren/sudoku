@@ -1,12 +1,8 @@
 import { useInput } from "ink";
 import { type Dispatch, type SetStateAction, useState } from "react";
 import type { GameState } from "../../app/gameState.ts";
-import {
-  fileExists,
-  loadFromFile,
-  savePath,
-  saveToFile,
-} from "../../storage/fileSaveStore.ts";
+import { loadFromStore, saveToStore } from "../../app/saveLoad.ts";
+import { fileSaveStore, savePath } from "../../storage/fileSaveStore.ts";
 
 export type SaveLoadDialog = {
   mode: "save" | "load" | "overwrite";
@@ -22,12 +18,39 @@ export function useSaveLoad(
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
 
-  async function save(path: string) {
+  async function save(path: string, overwrite = false) {
     setBusy(true);
     try {
-      await saveToFile(path, game);
-      setLocation(savePath(path));
-      setStatus(`已保存至 ${savePath(path)}`);
+      const target = savePath(path);
+      const result = await saveToStore(
+        fileSaveStore,
+        target,
+        game,
+        location,
+        overwrite,
+      );
+      if (result === "confirm-overwrite") {
+        setDialog({ mode: "overwrite", path });
+      } else {
+        setLocation(target);
+        setStatus(`已保存至 ${target}`);
+        setDialog(null);
+      }
+    } catch (error) {
+      setStatus(errorMessage(error));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function load(path: string) {
+    setBusy(true);
+    try {
+      const location = savePath(path);
+      const loaded = await loadFromStore(fileSaveStore, location);
+      setGame(loaded);
+      setLocation(location);
+      setStatus(`已加载 ${location}`);
       setDialog(null);
     } catch (error) {
       setStatus(errorMessage(error));
@@ -36,37 +59,13 @@ export function useSaveLoad(
     }
   }
 
-  async function submit(current: NonNullable<SaveLoadDialog>) {
+  function submit(current: NonNullable<SaveLoadDialog>) {
     if (!current.path.trim()) {
       setStatus("请输入存档路径。");
       return;
     }
-    setBusy(true);
-    try {
-      if (current.mode === "save") {
-        if (
-          (await fileExists(current.path)) &&
-          savePath(current.path) !== location
-        ) {
-          setDialog({ ...current, mode: "overwrite" });
-        } else {
-          await saveToFile(current.path, game);
-          setLocation(savePath(current.path));
-          setStatus(`已保存至 ${savePath(current.path)}`);
-          setDialog(null);
-        }
-      } else {
-        const loaded = await loadFromFile(current.path);
-        setGame(loaded);
-        setLocation(savePath(current.path));
-        setStatus(`已加载 ${savePath(current.path)}`);
-        setDialog(null);
-      }
-    } catch (error) {
-      setStatus(errorMessage(error));
-    } finally {
-      setBusy(false);
-    }
+    if (current.mode === "save") void save(current.path);
+    if (current.mode === "load") void load(current.path);
   }
 
   useInput((input, key) => {
@@ -86,7 +85,7 @@ export function useSaveLoad(
       return;
     }
     if (dialog.mode === "overwrite") {
-      if (input.toLowerCase() === "y") void save(dialog.path);
+      if (input.toLowerCase() === "y") void save(dialog.path, true);
       if (input.toLowerCase() === "n") setDialog({ ...dialog, mode: "save" });
       return;
     }
