@@ -7,6 +7,7 @@ export const BOARD_HEIGHT = 13;
 export const SECTION_GAP = 1;
 export const RULE_GAP = 2;
 export const RULE_WIDTH = 1;
+// deno-fmt-ignore
 export const SIDEBAR_WIDTH = CONTENT_WIDTH - BOARD_WIDTH - RULE_GAP * 2 - RULE_WIDTH;
 
 // Header, board, status, three help rows, their spacing, and outer padding.
