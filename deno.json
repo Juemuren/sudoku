@@ -30,7 +30,7 @@
   },
   "fmt": {
     "lineWidth": 80,
-    "include": ["src/", "tests/", "docs/", "deno.json", "README.md"]
+    "include": ["src/", "tests/", "deno.json"]
   },
   "lint": {
     "include": ["src/", "tests/"]
