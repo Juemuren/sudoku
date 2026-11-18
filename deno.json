@@ -2,12 +2,16 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "react",
+    "lib": ["deno.window", "dom", "dom.iterable"],
     "strict": true,
     "noUncheckedIndexedAccess": true
   },
+  "nodeModulesDir": "auto",
   "imports": {
     "ink": "npm:ink@8.0.0",
     "react": "npm:react@19.3.1",
+    "react-dom/client": "npm:react-dom@19.3.1/client",
+    "vite": "npm:vite@7.2.2",
     "zod": "npm:zod@4.6.7",
     "@types/react": "npm:@types/react@19.3.0",
     "@std/path": "jsr:@std/path@^1.1.4"
@@ -15,7 +19,10 @@
   "tasks": {
     "start": "deno run -A src/ui/tui/index.tsx",
     "dev": "deno run -A --watch src/ui/tui/index.tsx",
-    "check": "deno check src/ui/tui/index.tsx tests/*.test.ts",
+    "web:dev": "deno run -A npm:vite@7.2.2 --config src/ui/webui/vite.config.ts",
+    "web:build": "deno run -A npm:vite@7.2.2 build --config src/ui/webui/vite.config.ts",
+    "web:preview": "deno run -A npm:vite@7.2.2 preview --config src/ui/webui/vite.config.ts",
+    "check": "deno check src/ui/tui/index.tsx src/ui/webui/main.tsx tests/*.test.ts",
     "test": "deno test -A tests/",
     "lint": "deno lint",
     "fmt": "deno fmt",

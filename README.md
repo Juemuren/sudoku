@@ -1,6 +1,6 @@
 # 数独游戏
 
-使用 TypeScript 实现的终端数独游戏。题目由回溯算法生成，并检查唯一解。
+使用 TypeScript 实现的数独游戏，提供终端界面和浏览器界面。
 
 ## 运行
 
@@ -8,10 +8,23 @@
 
 ```sh
 deno install
+```
+
+### 终端界面
+
+```sh
 deno task start
 ```
 
 游戏在交互式终端中运行。
+
+### 浏览器界面
+
+```sh
+deno task web:dev
+```
+
+打开 Vite 输出的本地地址。
 
 ## 构建
 
@@ -23,6 +36,15 @@ deno task build
 
 - Windows 产物为 `dist/sudoku.exe`
 - Linux / macOS 产物为 `dist/sudoku`
+
+### WebUI
+
+```sh
+deno task web:build
+deno task web:preview
+```
+
+构建产物在 `dist/webui/`。
 
 ## 检查和测试
 

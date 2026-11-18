@@ -8,6 +8,7 @@ src/
   app/            应用层
   ui/             界面层
     tui/              终端界面
+    webui/            浏览器界面
   storage/        存储层
 ```
 
@@ -42,30 +43,50 @@ src/
 
 `useGameArchive.ts` 收集路径、显示覆盖确认与操作结果，并调用存档用例。
 
-### 浏览器界面：`src/ui/webui`
+### 浏览器界面：`src/ui/webui/`
 
-浏览器界面尚未实现。实现规划参考 [PLAN.md](PLAN.md)。
+浏览器界面使用 React，由 React 组件负责展示内容和处理用户事件。
+
+`App.tsx` 展示棋盘、统计和操作按钮，并调用应用层的游戏用例。
 
 ## 存储：`src/storage/`
 
-`fileGameStore.ts` 实现 `GameStore`，供 TUI 使用。
-它解析本地路径、限制读取大小，并通过临时文件写入存档。
-存档格式和数独校验留在应用层与领域层。
+- `fileGameStore.ts` 实现终端的 `GameStore`，负责文件读写。
+- `validateGameArchive.ts` 在 Worker 中恢复文件存档，并设置校验超时。
+- `gameValidationWorker.ts` 是文件存档校验使用的 Worker 入口。
 
-`validateGameArchive.ts` 和 `gameValidationWorker.ts` 在 Worker 中恢复存档，
-并为题目校验设置超时。Worker 不定义校验规则。
+存档格式和数独校验规则由应用层与领域层共用。
 
-### 存档流程
+## 存档流程
 
-#### 保存
+### 终端存档流程
+
+#### 终端的保存
 
 1. TUI 取得并解析路径。
 2. `app/gameSave.ts` 判断是否需要覆盖确认。
 3. `fileGameStore.ts` 调用 `app/gameSave.ts` 序列化并写入文件。
 
-#### 加载
+#### 终端的加载
 
 1. `fileGameStore.ts` 读取文件并限制大小。
 2. `app/gameLoad.ts` 检查 JSON 结构。
 3. Worker 调用应用层恢复函数，由 `domain/validation.ts` 校验题目。
 4. TUI 更新游戏状态。玩家填错的数字会保留。
+
+### 浏览器存档流程
+
+`ui/webui/browserGameArchive.ts` 负责浏览器的文件读写交互。
+
+浏览器与终端共用应用层定义的 JSON 存档格式。
+
+#### 浏览器的保存
+
+1. `app/gameSave.ts` 将当前游戏序列化为 JSON。
+2. 浏览器下载存档文件；文件命名和重名处理由浏览器负责。
+
+#### 浏览器的加载
+
+1. 用户选择 JSON 文件；浏览器先拒绝超过 64 KiB 的文件。
+2. `app/gameLoad.ts` 解析并校验存档，恢复游戏状态。
+3. 用户确认后更新棋盘，保留玩家填错的数字。
