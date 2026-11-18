@@ -6,7 +6,7 @@ export function SiteHeader({ width }: { width: number }) {
   return (
     <header style={headerStyle(width)}>
       <div style={brandStyle}>
-        <span style={markStyle}>九</span>
+        <img src="./favicon.svg" width={36} height={36} alt="" />
         <span>数独 · Sudoku</span>
       </div>
     </header>
@@ -33,14 +33,4 @@ const brandStyle: CSSProperties = {
   fontSize: 22,
   fontWeight: 700,
   letterSpacing: ".06em",
-};
-const markStyle: CSSProperties = {
-  display: "grid",
-  placeItems: "center",
-  width: 36,
-  height: 36,
-  borderRadius: 8,
-  color: colors.surface,
-  background: colors.brand,
-  fontSize: 20,
 };

@@ -18,7 +18,7 @@
   },
   "tasks": {
     "tui:dev": "deno run -A --watch src/ui/tui/index.tsx",
-    "tui:build": "deno compile -A --include src/ui/tui/storage/gameValidationWorker.ts --output dist/sudoku src/ui/tui/index.tsx",
+    "tui:build": "deno run -A src/ui/tui/build.ts",
     "tui:preview": "deno run -A src/ui/tui/index.tsx",
     "webui:dev": "deno run -A npm:vite@7.2.2 --config src/ui/webui/vite.config.ts",
     "webui:build": "deno run -A npm:vite@7.2.2 build --config src/ui/webui/vite.config.ts",

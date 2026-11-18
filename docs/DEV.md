@@ -33,6 +33,12 @@ deno task tui:build
 - Windows 产物为 `dist/sudoku.exe`
 - Linux / macOS 产物为 `dist/sudoku`
 
+Windows 可执行文件的图标来自 `src/ui/webui/public/favicon.svg`。修改 SVG 后用 ImageMagick 重新生成：
+
+```sh
+magick -density 384 -background none src/ui/webui/public/favicon.svg -resize 256x256 -define icon:auto-resize=256,128,64,48,32,16 src/ui/tui/favicon.ico
+```
+
 ### WebUI
 
 ```sh
