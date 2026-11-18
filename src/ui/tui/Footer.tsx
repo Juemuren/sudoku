@@ -50,7 +50,7 @@ function KeyGroup({ title, hints }: { title: string; hints: KeyHint[] }) {
 export function Footer({ message, solved, conflictCount }: Props) {
   return (
     <Box flexDirection="column" alignItems="center" width="100%">
-      <Text color={solved ? "green" : conflictCount ? "red" : "yellow"}>
+      <Text color={messageColor(solved, conflictCount)}>
         {message}
         {conflictCount ? `冲突格：${conflictCount}` : ""}
       </Text>
@@ -60,4 +60,10 @@ export function Footer({ message, solved, conflictCount }: Props) {
       </Box>
     </Box>
   );
+}
+
+function messageColor(solved: boolean, conflictCount: number) {
+  if (solved) return "green";
+  if (conflictCount) return "red";
+  return "yellow";
 }

@@ -8,6 +8,33 @@ const columns = Array.from({ length: SIZE }, (_, index) => index);
 const topBorder = "┏━━━━━━━┳━━━━━━━┳━━━━━━━┓";
 const midBorder = "┣━━━━━━━╋━━━━━━━╋━━━━━━━┫";
 const btmBorder = "┗━━━━━━━┻━━━━━━━┻━━━━━━━┛";
+const topSeparator = "┃ ";
+const midSeparator = " ┃ ";
+const btmSeparator = " ┃";
+const rowBorders: Partial<Record<number, string>> = {
+  "-1": topBorder,
+  "0": "",
+  "1": "",
+  "2": midBorder,
+  "3": "",
+  "4": "",
+  "5": midBorder,
+  "6": "",
+  "7": "",
+  "8": btmBorder,
+};
+const columnSeparators: Record<number, string> = {
+  "-1": topSeparator,
+  "0": " ",
+  "1": " ",
+  "2": midSeparator,
+  "3": " ",
+  "4": " ",
+  "5": midSeparator,
+  "6": " ",
+  "7": " ",
+  "8": btmSeparator,
+};
 
 type Props = {
   game: GameState;
@@ -17,11 +44,11 @@ type Props = {
 export function SudokuBoard({ game, badCells }: Props) {
   return (
     <>
-      <Text>{topBorder}</Text>
+      <Text>{rowBorders[-1]}</Text>
       {rows.map((row) => (
         <Fragment key={row}>
           <Text>
-            {"┃ "}
+            {columnSeparators[-1]}
             {columns.map((column) => {
               const index = row * SIZE + column;
               const value = game.board[index];
@@ -30,31 +57,32 @@ export function SudokuBoard({ game, badCells }: Props) {
                 <Fragment key={column}>
                   <Text
                     bold={game.puzzle[index] !== 0 || selected}
-                    color={badCells.has(index)
-                      ? "red"
-                      : game.puzzle[index] !== 0
-                      ? "white"
-                      : "cyan"}
+                    color={cellColor(
+                      badCells.has(index),
+                      game.puzzle[index] !== 0,
+                    )}
                     backgroundColor={selected ? "blue" : undefined}
                   >
                     {value === 0 ? "·" : value}
                   </Text>
                   <Text>
-                    {column === 2 || column === 5
-                      ? " ┃ "
-                      : column === 8
-                      ? " ┃"
-                      : " "}
+                    {columnSeparators[column]}
                   </Text>
                 </Fragment>
               );
             })}
           </Text>
           <Text>
-            {row === 2 || row === 5 ? midBorder : row === 8 ? btmBorder : ""}
+            {rowBorders[row]}
           </Text>
         </Fragment>
       ))}
     </>
   );
+}
+
+function cellColor(conflict: boolean, given: boolean) {
+  if (conflict) return "red";
+  if (given) return "white";
+  return "cyan";
 }

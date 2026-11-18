@@ -46,26 +46,22 @@ export function selectCell(state: GameState, index: number): GameState {
 
 export type Direction = "up" | "down" | "left" | "right";
 
+const directionOffsets: Record<Direction, readonly [number, number]> = {
+  up: [-1, 0],
+  down: [1, 0],
+  left: [0, -1],
+  right: [0, 1],
+};
+
 export function moveSelection(
   state: GameState,
   direction: Direction,
 ): GameState {
   const row = rowOf(state.selected);
   const column = columnOf(state.selected);
-  const nextRow = Math.max(
-    0,
-    Math.min(
-      SIZE - 1,
-      row + (direction === "down" ? 1 : direction === "up" ? -1 : 0),
-    ),
-  );
-  const nextColumn = Math.max(
-    0,
-    Math.min(
-      SIZE - 1,
-      column + (direction === "right" ? 1 : direction === "left" ? -1 : 0),
-    ),
-  );
+  const [rowOffset, columnOffset] = directionOffsets[direction];
+  const nextRow = Math.max(0, Math.min(SIZE - 1, row + rowOffset));
+  const nextColumn = Math.max(0, Math.min(SIZE - 1, column + columnOffset));
   return selectCell(state, nextRow * SIZE + nextColumn);
 }
 
@@ -82,12 +78,14 @@ export function enterValue(state: GameState, value: number): GameState {
     ...state,
     board,
     history: [...state.history, snapshot(state)],
-    message: isSolved(board)
-      ? "完成！恭喜解出数独。"
-      : value === 0
-      ? "已清除。"
-      : "已填入。",
+    message: entryMessage(board, value),
   };
+}
+
+function entryMessage(board: Board, value: number): string {
+  if (isSolved(board)) return "完成！恭喜解出数独。";
+  if (value === 0) return "已清除。";
+  return "已填入。";
 }
 
 export function requestHint(state: GameState): GameState {

@@ -36,15 +36,7 @@ export function App() {
       exit();
       return;
     }
-    const direction: Direction | undefined = key.upArrow
-      ? "up"
-      : key.downArrow
-      ? "down"
-      : key.leftArrow
-      ? "left"
-      : key.rightArrow
-      ? "right"
-      : undefined;
+    const direction = arrowDirection(key);
     if (direction) {
       setGame((state) => moveSelection(state, direction));
       return;
@@ -65,13 +57,7 @@ export function App() {
       setGame(undo);
       return;
     }
-    const difficulty: Difficulty | undefined = input === "e"
-      ? "easy"
-      : input === "m"
-      ? "medium"
-      : input === "d"
-      ? "hard"
-      : undefined;
+    const difficulty = difficultyKeys[input];
     if (difficulty) {
       saveLoad.forgetLocation();
       setGame(newGame(difficulty));
@@ -113,4 +99,22 @@ export function App() {
       </Box>
     </Box>
   );
+}
+
+const difficultyKeys: Record<string, Difficulty | undefined> = {
+  e: "easy",
+  m: "medium",
+  d: "hard",
+};
+
+function arrowDirection(key: {
+  upArrow: boolean;
+  downArrow: boolean;
+  leftArrow: boolean;
+  rightArrow: boolean;
+}): Direction | undefined {
+  if (key.upArrow) return "up";
+  if (key.downArrow) return "down";
+  if (key.leftArrow) return "left";
+  if (key.rightArrow) return "right";
 }
