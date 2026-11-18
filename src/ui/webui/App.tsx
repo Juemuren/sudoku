@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { CSSProperties } from "react";
 import {
   enterValue,
   type GameState,
@@ -9,6 +10,7 @@ import {
 } from "../../app/gameState.ts";
 import { gameStats } from "../../app/gameStats.ts";
 import type { Difficulty } from "../../domain/generator.ts";
+import { colors } from "../styles/colors.ts";
 import { GameArchivePrompt } from "./components/GameArchivePrompt.tsx";
 import { GamePanel } from "./components/GamePanel.tsx";
 import { Sidebar } from "./components/Sidebar.tsx";
@@ -17,6 +19,7 @@ import { useGameArchive } from "./hooks/useGameArchive.ts";
 import { useGameKeyboard } from "./hooks/useGameKeyboard.ts";
 
 export function App() {
+  const [width, setWidth] = useState(() => globalThis.innerWidth);
   const [game, setGame] = useState<GameState>(() => newGame());
   const [now, setNow] = useState(Date.now());
   const gameArchive = useGameArchive(game, setGame);
@@ -24,6 +27,12 @@ export function App() {
   useEffect(() => {
     const timer = globalThis.setInterval(() => setNow(Date.now()), 1000);
     return () => globalThis.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const onResize = () => setWidth(globalThis.innerWidth);
+    globalThis.addEventListener("resize", onResize);
+    return () => globalThis.removeEventListener("resize", onResize);
   }, []);
 
   function startNewGame(difficulty: Difficulty) {
@@ -41,10 +50,11 @@ export function App() {
   });
 
   return (
-    <div className="app-shell">
-      <SiteHeader />
-      <main className="layout">
+    <div style={shellStyle}>
+      <SiteHeader width={width} />
+      <main style={layoutStyle(width)}>
         <GamePanel
+          width={width}
           game={game}
           stats={gameStats(game, now)}
           status={gameArchive.status}
@@ -57,6 +67,7 @@ export function App() {
           onHint={() => setGame(requestHint)}
         />
         <Sidebar
+          width={width}
           busy={gameArchive.busy}
           fileInput={gameArchive.fileInput}
           onSave={gameArchive.save}
@@ -73,4 +84,32 @@ export function App() {
       )}
     </div>
   );
+}
+
+const shellStyle: CSSProperties = {
+  minHeight: "100vh",
+  fontFamily: 'system-ui, "Microsoft YaHei", "PingFang SC", sans-serif',
+  color: colors.text,
+  background: colors.canvas,
+  fontSynthesis: "none",
+};
+
+function layoutStyle(width: number): CSSProperties {
+  return {
+    boxSizing: "border-box",
+    maxWidth: 1220,
+    margin: "0 auto",
+    padding: width <= 650
+      ? "27px 14px 50px"
+      : width <= 950
+      ? "35px 30px 70px"
+      : "48px 30px 70px",
+    display: "grid",
+    gridTemplateColumns: width <= 950
+      ? "minmax(0, 650px)"
+      : "minmax(0, 696px) 350px",
+    justifyContent: "center",
+    gap: width <= 650 ? 30 : 40,
+    alignItems: "start",
+  };
 }

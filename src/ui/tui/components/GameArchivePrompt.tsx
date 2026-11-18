@@ -1,5 +1,6 @@
 import { Text } from "ink";
 import type { GameArchiveDialog } from "../hooks/useGameArchive.ts";
+import { terminalColors } from "../../styles/colors.ts";
 
 export function GameArchivePrompt({
   dialog,
@@ -8,9 +9,9 @@ export function GameArchivePrompt({
   dialog: GameArchiveDialog;
   busy: boolean;
 }) {
-  if (busy) return <Text color="yellow">处理中…</Text>;
+  if (busy) return <Text color={terminalColors.warning}>处理中…</Text>;
   if (!dialog) return null;
-  return <Text color="cyan">{promptText(dialog)}</Text>;
+  return <Text color={terminalColors.accent}>{promptText(dialog)}</Text>;
 }
 
 function promptText(dialog: NonNullable<GameArchiveDialog>): string {

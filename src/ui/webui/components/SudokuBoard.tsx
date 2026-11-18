@@ -1,15 +1,24 @@
 import type { GameState } from "../../../app/gameState.ts";
+import type { CSSProperties } from "react";
+import { colors } from "../../styles/colors.ts";
 
 type Props = {
   game: GameState;
   badCells: Set<number>;
+  width: number;
   onSelectCell: (index: number) => void;
 };
 
-export function SudokuBoard({ game, badCells, onSelectCell }: Props) {
+export function SudokuBoard({ game, badCells, width, onSelectCell }: Props) {
   return (
-    <div className="board-wrap">
-      <div className="board" role="grid" aria-label="数独棋盘">
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        paddingTop: width <= 650 ? 18 : 26,
+      }}
+    >
+      <div style={boardStyle} role="grid" aria-label="数独棋盘">
         {game.board.map((value, index) => {
           const row = Math.floor(index / 9);
           const column = index % 9;
@@ -26,14 +35,16 @@ export function SudokuBoard({ game, badCells, onSelectCell }: Props) {
                 badCells.has(index) ? "，冲突" : ""
               }`}
               aria-selected={selected}
-              className={[
-                "cell",
-                given ? "given" : "entered",
-                selected ? "selected" : "",
-                badCells.has(index) ? "conflict" : "",
-                column === 2 || column === 5 ? "box-right" : "",
-                row === 2 || row === 5 ? "box-bottom" : "",
-              ].filter(Boolean).join(" ")}
+              style={cellStyle({
+                width,
+                given,
+                selected,
+                conflict: badCells.has(index),
+                boxRight: column === 2 || column === 5,
+                boxBottom: row === 2 || row === 5,
+                lastColumn: column === 8,
+                lastRow: row === 8,
+              })}
               onClick={() => onSelectCell(index)}
             >
               {value || ""}
@@ -43,4 +54,63 @@ export function SudokuBoard({ game, badCells, onSelectCell }: Props) {
       </div>
     </div>
   );
+}
+
+const boardStyle: CSSProperties = {
+  boxSizing: "border-box",
+  width: "min(100%, 540px)",
+  aspectRatio: "1",
+  display: "grid",
+  gridTemplateColumns: "repeat(9, 1fr)",
+  gridTemplateRows: "repeat(9, 1fr)",
+  border: `2px solid ${colors.gridBorder}`,
+  background: colors.surface,
+  boxShadow: `0 12px 30px ${colors.boardShadow}`,
+};
+
+function cellStyle(state: {
+  width: number;
+  given: boolean;
+  selected: boolean;
+  conflict: boolean;
+  boxRight: boolean;
+  boxBottom: boolean;
+  lastColumn: boolean;
+  lastRow: boolean;
+}): CSSProperties {
+  return {
+    boxSizing: "border-box",
+    minWidth: 0,
+    padding: 0,
+    background: state.conflict
+      ? state.selected ? colors.conflictSelected : colors.conflictSoft
+      : state.selected
+      ? colors.accentSoft
+      : colors.surface,
+    border: 0,
+    borderRight: state.boxRight
+      ? `2px solid ${colors.gridBorder}`
+      : state.lastColumn
+      ? 0
+      : `1px solid ${colors.gridLine}`,
+    borderBottom: state.boxBottom
+      ? `2px solid ${colors.gridBorder}`
+      : state.lastRow
+      ? 0
+      : `1px solid ${colors.gridLine}`,
+    color: state.conflict
+      ? colors.conflict
+      : state.given
+      ? colors.givenText
+      : colors.accentText,
+    fontFamily: "inherit",
+    fontSize: state.width <= 420 ? 19 : "clamp(18px, 3vw, 28px)",
+    fontWeight: state.given ? 700 : 600,
+    lineHeight: 1,
+    fontVariantNumeric: "tabular-nums",
+    cursor: "pointer",
+    boxShadow: state.selected
+      ? `inset 0 0 0 2px ${colors.selectedBorder}`
+      : undefined,
+  };
 }
