@@ -4,20 +4,17 @@
 
 主要工具
 
-- 运行环境为 Node.js 26
-- 包管理器使用 pnpm 12
+- 运行环境和包管理器都使用 Deno
 - 游戏逻辑使用 TypeScript
 
 对于 UI
 
-- WebUI 使用 React
-- TUI 使用 Ink
-- 打包使用 Vite
+- WebUI 框架使用 React，打包使用 Vite
+- TUI 框架使用 Ink，打包使用 Deno
 
 对于检查和测试
 
-- Lint 和 Format 使用 Biome
-- Test 使用 Node.js 测试模块
+- Lint / Format / Test 都使用 Deno
 - JSON Schema 验证使用 Zod
 
 ## 架构规划

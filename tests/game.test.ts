@@ -1,16 +1,15 @@
 import assert from "node:assert/strict";
-import test from "node:test";
 import {
   enterValue,
   newGame,
   requestHint,
   selectCell,
-} from "../src/app/gameState.js";
-import { generatePuzzle } from "../src/domain/generator.js";
-import { conflicts, isSolved } from "../src/domain/rules.js";
-import { solve } from "../src/domain/solver.js";
+} from "../src/app/gameState.ts";
+import { generatePuzzle } from "../src/domain/generator.ts";
+import { conflicts, isSolved } from "../src/domain/rules.ts";
+import { solve } from "../src/domain/solver.ts";
 
-test("每个难度生成合法且唯一解的题目", () => {
+Deno.test("每个难度生成合法且唯一解的题目", () => {
   for (const difficulty of ["easy", "medium", "hard"] as const) {
     const { puzzle, solution } = generatePuzzle(difficulty);
     assert.equal(puzzle.length, 81);
@@ -21,7 +20,7 @@ test("每个难度生成合法且唯一解的题目", () => {
   }
 });
 
-test("给定数字不可修改，普通数字可输入和清除", () => {
+Deno.test("给定数字不可修改，普通数字可输入和清除", () => {
   const start = newGame("easy");
   const given = start.puzzle.findIndex((value) => value !== 0);
   const empty = start.puzzle.indexOf(0);
@@ -35,7 +34,7 @@ test("给定数字不可修改，普通数字可输入和清除", () => {
   assert.equal(start.board[empty], 0);
 });
 
-test("提示填写一个正确数字并记录次数", () => {
+Deno.test("提示填写一个正确数字并记录次数", () => {
   const start = newGame("easy");
   const hinted = requestHint(start);
   assert.equal(hinted.hintsUsed, 1);

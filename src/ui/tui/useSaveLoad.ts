@@ -1,12 +1,12 @@
 import { useInput } from "ink";
 import { type Dispatch, type SetStateAction, useState } from "react";
-import type { GameState } from "../../app/gameState.js";
+import type { GameState } from "../../app/gameState.ts";
 import {
   fileExists,
   loadFromFile,
   savePath,
   saveToFile,
-} from "../../storage/fileSaveStore.js";
+} from "../../storage/fileSaveStore.ts";
 
 export type SaveLoadDialog = {
   mode: "save" | "load" | "overwrite";

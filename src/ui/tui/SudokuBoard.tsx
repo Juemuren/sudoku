@@ -1,7 +1,7 @@
 import { Text } from "ink";
 import { Fragment } from "react";
-import type { GameState } from "../../app/gameState.js";
-import { SIZE } from "../../domain/board.js";
+import type { GameState } from "../../app/gameState.ts";
+import { SIZE } from "../../domain/board.ts";
 
 const rows = Array.from({ length: SIZE }, (_, index) => index);
 const columns = Array.from({ length: SIZE }, (_, index) => index);
@@ -30,13 +30,11 @@ export function SudokuBoard({ game, badCells }: Props) {
                 <Fragment key={column}>
                   <Text
                     bold={game.puzzle[index] !== 0 || selected}
-                    color={
-                      badCells.has(index)
-                        ? "red"
-                        : game.puzzle[index] !== 0
-                          ? "white"
-                          : "cyan"
-                    }
+                    color={badCells.has(index)
+                      ? "red"
+                      : game.puzzle[index] !== 0
+                      ? "white"
+                      : "cyan"}
                     backgroundColor={selected ? "blue" : undefined}
                   >
                     {value === 0 ? "·" : value}
@@ -45,19 +43,15 @@ export function SudokuBoard({ game, badCells }: Props) {
                     {column === 2 || column === 5
                       ? " ┃ "
                       : column === 8
-                        ? " ┃"
-                        : " "}
+                      ? " ┃"
+                      : " "}
                   </Text>
                 </Fragment>
               );
             })}
           </Text>
           <Text>
-            {row === 2 || row === 5
-              ? midBorder
-              : row === 8
-                ? btmBorder
-                : ""}
+            {row === 2 || row === 5 ? midBorder : row === 8 ? btmBorder : ""}
           </Text>
         </Fragment>
       ))}

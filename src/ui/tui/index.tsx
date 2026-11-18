@@ -1,5 +1,5 @@
-#!/usr/bin/env node
-import { App } from "./App.js";
+#!/usr/bin/env deno
+import { App } from "./App.tsx";
 
 // Ink needs an interactive terminal for keyboard input.
 if (!process.stdin.isTTY) {

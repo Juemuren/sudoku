@@ -1,5 +1,5 @@
-import { type Board, CELL_COUNT } from "./board.js";
-import { shuffle, solve } from "./solver.js";
+import { type Board, CELL_COUNT } from "./board.ts";
+import { shuffle, solve } from "./solver.ts";
 
 export type Difficulty = "easy" | "medium" | "hard";
 export type Puzzle = { puzzle: Board; solution: Board; difficulty: Difficulty };
@@ -14,11 +14,16 @@ export function generatePuzzle(difficulty: Difficulty = "medium"): Puzzle {
   const solution = solve(Array(CELL_COUNT).fill(0) as Board, 1, true)[0];
   if (!solution) throw new Error("无法生成完整棋盘。");
   const puzzle = [...solution];
-  for (const index of shuffle(
-    Array.from({ length: CELL_COUNT }, (_, i) => i),
-  )) {
-    if (puzzle.filter((value) => value !== 0).length <= clueTargets[difficulty])
+  for (
+    const index of shuffle(
+      Array.from({ length: CELL_COUNT }, (_, i) => i),
+    )
+  ) {
+    if (
+      puzzle.filter((value) => value !== 0).length <= clueTargets[difficulty]
+    ) {
       break;
+    }
     const saved = puzzle[index];
     if (saved === undefined) throw new Error("生成的棋盘缺少数字。");
     puzzle[index] = 0;

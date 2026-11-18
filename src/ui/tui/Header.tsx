@@ -1,5 +1,5 @@
 import { Text } from "ink";
-import type { Difficulty } from "../../domain/generator.js";
+import type { Difficulty } from "../../domain/generator.ts";
 
 const difficultyLabels: Record<Difficulty, string> = {
   easy: "简单",
@@ -20,7 +20,9 @@ export function Header({
   remaining,
   hintsUsed,
 }: Props) {
-  const time = `${String(Math.floor(elapsedSeconds / 60)).padStart(2, "0")}:${String(elapsedSeconds % 60).padStart(2, "0")}`;
+  const time = `${String(Math.floor(elapsedSeconds / 60)).padStart(2, "0")}:${
+    String(elapsedSeconds % 60).padStart(2, "0")
+  }`;
 
   return (
     <Text bold color="cyan">

@@ -1,5 +1,5 @@
 import { Text } from "ink";
-import type { SaveLoadDialog } from "./useSaveLoad.js";
+import type { SaveLoadDialog } from "./useSaveLoad.ts";
 
 export function SaveLoadPrompt({
   dialog,
@@ -14,7 +14,9 @@ export function SaveLoadPrompt({
     <Text color="cyan">
       {dialog.mode === "overwrite"
         ? `覆盖 ${dialog.path}？Y 确认 / N 返回 / Esc 取消`
-        : `${dialog.mode === "save" ? "保存" : "加载"}路径: ${dialog.path}█ Enter 确认 / Esc 取消`}
+        : `${
+          dialog.mode === "save" ? "保存" : "加载"
+        }路径: ${dialog.path}█ Enter 确认 / Esc 取消`}
     </Text>
   );
 }

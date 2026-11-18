@@ -1,5 +1,5 @@
-import { conflicts, isSolved } from "../domain/rules.js";
-import type { GameState } from "./gameState.js";
+import { conflicts, isSolved } from "../domain/rules.ts";
+import type { GameState } from "./gameState.ts";
 
 export function gameStats(game: GameState, now: number) {
   const badCells = conflicts(game.board);

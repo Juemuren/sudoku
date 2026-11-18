@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { CELL_COUNT } from "../domain/board.js";
-import { conflicts } from "../domain/rules.js";
-import { solve } from "../domain/solver.js";
-import type { GameState } from "./gameState.js";
+import { CELL_COUNT } from "../domain/board.ts";
+import { conflicts } from "../domain/rules.ts";
+import { solve } from "../domain/solver.ts";
+import type { GameState } from "./gameState.ts";
 
 const boardSchema = z.array(z.number().int().min(0).max(9)).length(CELL_COUNT);
 const saveSchema = z.object({

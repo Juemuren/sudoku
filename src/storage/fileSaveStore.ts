@@ -1,9 +1,7 @@
-import { randomUUID } from "node:crypto";
-import { open, rename, rm, stat, writeFile } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
-import type { GameState } from "../app/gameState.js";
-import { parseSavedGame, serializeGame } from "../app/saveGame.js";
-import { verifySavedGame } from "./verifySavedGame.js";
+import { dirname, resolve } from "@std/path";
+import type { GameState } from "../app/gameState.ts";
+import { parseSavedGame, serializeGame } from "../app/saveGame.ts";
+import { verifySavedGame } from "./verifySavedGame.ts";
 
 const MAX_BYTES = 64 * 1024;
 
@@ -14,52 +12,48 @@ export function savePath(input: string): string {
 
 export async function saveToFile(path: string, game: GameState): Promise<void> {
   const target = savePath(path);
-  const temporary = resolve(dirname(target), `.${randomUUID()}.tmp`);
+  const temporary = resolve(dirname(target), `.${crypto.randomUUID()}.tmp`);
   try {
-    await writeFile(temporary, serializeGame(game), {
-      encoding: "utf8",
-      flag: "wx",
+    await Deno.writeTextFile(temporary, serializeGame(game), {
+      createNew: true,
     });
-    await rename(temporary, target);
+    await Deno.rename(temporary, target);
   } finally {
-    await rm(temporary, { force: true });
+    await Deno.remove(temporary).catch((error) => {
+      if (!(error instanceof Deno.errors.NotFound)) throw error;
+    });
   }
 }
 
 export async function fileExists(path: string): Promise<boolean> {
   try {
-    await stat(savePath(path));
+    await Deno.stat(savePath(path));
     return true;
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === "ENOENT") return false;
+    if (error instanceof Deno.errors.NotFound) return false;
     throw error;
   }
 }
 
 export async function loadFromFile(path: string): Promise<GameState> {
   const target = savePath(path);
-  const handle = await open(target, "r");
+  const handle = await Deno.open(target, { read: true });
   let data: string;
   try {
     const info = await handle.stat();
-    if (!info.isFile()) throw new Error("存档路径不是普通文件。");
+    if (!info.isFile) throw new Error("存档路径不是普通文件。");
     if (info.size > MAX_BYTES) throw new Error("存档文件过大。");
-    const buffer = Buffer.alloc(MAX_BYTES + 1);
+    const buffer = new Uint8Array(MAX_BYTES + 1);
     let bytesRead = 0;
     while (bytesRead < buffer.length) {
-      const result = await handle.read(
-        buffer,
-        bytesRead,
-        buffer.length - bytesRead,
-        bytesRead,
-      );
-      if (result.bytesRead === 0) break;
-      bytesRead += result.bytesRead;
+      const count = await handle.read(buffer.subarray(bytesRead));
+      if (count === null) break;
+      bytesRead += count;
     }
     if (bytesRead > MAX_BYTES) throw new Error("存档文件过大。");
-    data = buffer.toString("utf8", 0, bytesRead);
+    data = new TextDecoder().decode(buffer.subarray(0, bytesRead));
   } finally {
-    await handle.close();
+    handle.close();
   }
   return verifySavedGame(parseSavedGame(data));
 }

@@ -40,7 +40,7 @@ function KeyGroup({ title, hints }: { title: string; hints: KeyHint[] }) {
           <Text bold color="cyan">
             [{key}]
           </Text>
-          <Text dimColor> {action}</Text>
+          <Text dimColor>{action}</Text>
         </Box>
       ))}
     </Box>

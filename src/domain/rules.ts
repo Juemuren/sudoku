@@ -1,4 +1,4 @@
-import { assertBoard, type Board, CELL_COUNT, peers } from "./board.js";
+import { assertBoard, type Board, CELL_COUNT, peers } from "./board.ts";
 
 export function candidates(board: Board, index: number): number[] {
   if (index < 0 || index >= CELL_COUNT || board[index] !== 0) return [];

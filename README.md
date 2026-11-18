@@ -4,32 +4,43 @@
 
 ## 运行
 
-需要 Node.js 26 和 pnpm 12
+需要 Deno 2.9 或更新版本。
 
 ```sh
-pnpm install
-pnpm start
+deno install
+deno task start
 ```
 
 游戏在交互式终端中运行。
 
+## 构建
+
+### TUI
+
+```sh
+deno task build
+```
+
+- Windows 产物为 `dist/sudoku.exe`
+- Linux / macOS 产物为 `dist/sudoku`
+
 ## 检查和测试
 
-使用 TypeScript 进行类型检查
+使用 Deno 进行类型检查
 
 ```sh
-pnpm run typecheck
+deno task check
 ```
 
-使用 Biome 进行静态检查和格式化
+使用 Deno 进行静态检查和格式化
 
 ```sh
-pnpm run lint
-pnpm run format
+deno task lint
+deno task fmt
 ```
 
-使用 `node:test` 模块进行测试
+使用 Deno 进行测试
 
 ```sh
-pnpm test
+deno task test
 ```

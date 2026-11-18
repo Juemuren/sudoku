@@ -1,9 +1,7 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
-import { join } from "node:path";
-import test from "node:test";
-import type { GameState } from "../src/app/gameState.js";
-import { loadFromFile, saveToFile } from "../src/storage/fileSaveStore.js";
+import { join } from "@std/path";
+import type { GameState } from "../src/app/gameState.ts";
+import { loadFromFile, saveToFile } from "../src/storage/fileSaveStore.ts";
 
 const puzzle =
   "530070000600195000098000060800060003400803001700020006060000280000419005000080079"
@@ -30,17 +28,17 @@ function game(): GameState {
 }
 
 async function withSaveFile(run: (path: string) => Promise<void>) {
-  const root = join(process.cwd(), ".tmp");
-  await mkdir(root, { recursive: true });
-  const directory = await mkdtemp(join(root, "save-test-"));
+  const root = join(Deno.cwd(), ".tmp");
+  await Deno.mkdir(root, { recursive: true });
+  const directory = await Deno.makeTempDir({ dir: root, prefix: "save-test-" });
   try {
     await run(join(directory, "game.json"));
   } finally {
-    await rm(directory, { recursive: true, force: true });
+    await Deno.remove(directory, { recursive: true });
   }
 }
 
-test("保存后恢复进度和计时，保留玩家填错的数字", async () => {
+Deno.test("保存后恢复进度和计时，保留玩家填错的数字", async () => {
   await withSaveFile(async (path) => {
     const current = game();
     current.board[2] = 9;
@@ -58,11 +56,11 @@ test("保存后恢复进度和计时，保留玩家填错的数字", async () =>
   });
 });
 
-test("格式错误和改动给定数字的存档不能加载", async () => {
+Deno.test("格式错误和改动给定数字的存档不能加载", async () => {
   await withSaveFile(async (path) => {
-    await writeFile(path, "{bad json");
+    await Deno.writeTextFile(path, "{bad json");
     await assert.rejects(loadFromFile(path), /JSON/);
-    await writeFile(path, JSON.stringify({ version: 2, game: {} }));
+    await Deno.writeTextFile(path, JSON.stringify({ version: 2, game: {} }));
     await assert.rejects(loadFromFile(path), /存档格式错误/);
     const saved = {
       version: 1,
@@ -76,19 +74,19 @@ test("格式错误和改动给定数字的存档不能加载", async () => {
       },
     };
     saved.game.board[0] = 0;
-    await writeFile(path, JSON.stringify(saved));
+    await Deno.writeTextFile(path, JSON.stringify(saved));
     await assert.rejects(loadFromFile(path), /修改/);
   });
 });
 
-test("过大的存档在解析前被拒绝", async () => {
+Deno.test("过大的存档在解析前被拒绝", async () => {
   await withSaveFile(async (path) => {
-    await writeFile(path, " ".repeat(64 * 1024 + 1));
+    await Deno.writeTextFile(path, " ".repeat(64 * 1024 + 1));
     await assert.rejects(loadFromFile(path), /过大/);
   });
 });
 
-test("给定数字冲突和多解题目不能加载", async () => {
+Deno.test("给定数字冲突和多解题目不能加载", async () => {
   await withSaveFile(async (path) => {
     const saved = {
       version: 1,
@@ -103,11 +101,11 @@ test("给定数字冲突和多解题目不能加载", async () => {
     };
     saved.game.puzzle[2] = 5;
     saved.game.board[2] = 5;
-    await writeFile(path, JSON.stringify(saved));
+    await Deno.writeTextFile(path, JSON.stringify(saved));
     await assert.rejects(loadFromFile(path), /冲突/);
     saved.game.puzzle = Array(81).fill(0);
     saved.game.board = Array(81).fill(0);
-    await writeFile(path, JSON.stringify(saved));
+    await Deno.writeTextFile(path, JSON.stringify(saved));
     await assert.rejects(loadFromFile(path), /多个解/);
   });
 });

@@ -4,9 +4,9 @@ import {
   columnOf,
   rowOf,
   SIZE,
-} from "../domain/board.js";
-import { type Difficulty, generatePuzzle } from "../domain/generator.js";
-import { isSolved } from "../domain/rules.js";
+} from "../domain/board.ts";
+import { type Difficulty, generatePuzzle } from "../domain/generator.ts";
+import { isSolved } from "../domain/rules.ts";
 
 export type GameState = {
   puzzle: Board;
@@ -38,8 +38,9 @@ export function newGame(difficulty: Difficulty = "medium"): GameState {
 }
 
 export function selectCell(state: GameState, index: number): GameState {
-  if (!Number.isInteger(index) || index < 0 || index >= CELL_COUNT)
+  if (!Number.isInteger(index) || index < 0 || index >= CELL_COUNT) {
     return state;
+  }
   return { ...state, selected: index };
 }
 
@@ -71,8 +72,9 @@ export function moveSelection(
 export function enterValue(state: GameState, value: number): GameState {
   if (!Number.isInteger(value) || value < 0 || value > 9) return state;
   const index = state.selected;
-  if (state.puzzle[index] !== 0)
+  if (state.puzzle[index] !== 0) {
     return { ...state, message: "此格是题目给定数字。" };
+  }
   if (state.board[index] === value) return state;
   const board = [...state.board];
   board[index] = value;
@@ -83,8 +85,8 @@ export function enterValue(state: GameState, value: number): GameState {
     message: isSolved(board)
       ? "完成！恭喜解出数独。"
       : value === 0
-        ? "已清除。"
-        : "已填入。",
+      ? "已清除。"
+      : "已填入。",
   };
 }
 
@@ -105,7 +107,9 @@ export function requestHint(state: GameState): GameState {
     hintsUsed: state.hintsUsed + 1,
     message: isSolved(board)
       ? "完成！恭喜解出数独。"
-      : `提示：第 ${Math.floor(index / 9) + 1} 行第 ${(index % 9) + 1} 列是 ${board[index]}。`,
+      : `提示：第 ${Math.floor(index / 9) + 1} 行第 ${(index % 9) + 1} 列是 ${
+        board[index]
+      }。`,
   };
 }
 

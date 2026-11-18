@@ -8,14 +8,14 @@ import {
   newGame,
   requestHint,
   undo,
-} from "../../app/gameState.js";
-import { gameStats } from "../../app/gameStats.js";
-import type { Difficulty } from "../../domain/generator.js";
-import { Footer } from "./Footer.js";
-import { Header } from "./Header.js";
-import { SaveLoadPrompt } from "./SaveLoadPrompt.js";
-import { SudokuBoard } from "./SudokuBoard.js";
-import { useSaveLoad } from "./useSaveLoad.js";
+} from "../../app/gameState.ts";
+import { gameStats } from "../../app/gameStats.ts";
+import type { Difficulty } from "../../domain/generator.ts";
+import { Footer } from "./Footer.tsx";
+import { Header } from "./Header.tsx";
+import { SaveLoadPrompt } from "./SaveLoadPrompt.tsx";
+import { SudokuBoard } from "./SudokuBoard.tsx";
+import { useSaveLoad } from "./useSaveLoad.ts";
 
 export function App() {
   const { exit } = useApp();
@@ -39,12 +39,12 @@ export function App() {
     const direction: Direction | undefined = key.upArrow
       ? "up"
       : key.downArrow
-        ? "down"
-        : key.leftArrow
-          ? "left"
-          : key.rightArrow
-            ? "right"
-            : undefined;
+      ? "down"
+      : key.leftArrow
+      ? "left"
+      : key.rightArrow
+      ? "right"
+      : undefined;
     if (direction) {
       setGame((state) => moveSelection(state, direction));
       return;
@@ -65,14 +65,13 @@ export function App() {
       setGame(undo);
       return;
     }
-    const difficulty: Difficulty | undefined =
-      input === "e"
-        ? "easy"
-        : input === "m"
-          ? "medium"
-          : input === "d"
-            ? "hard"
-            : undefined;
+    const difficulty: Difficulty | undefined = input === "e"
+      ? "easy"
+      : input === "m"
+      ? "medium"
+      : input === "d"
+      ? "hard"
+      : undefined;
     if (difficulty) {
       saveLoad.forgetLocation();
       setGame(newGame(difficulty));

@@ -1,5 +1,5 @@
-import { type Board, CELL_COUNT } from "./board.js";
-import { candidates, conflicts } from "./rules.js";
+import { type Board, CELL_COUNT } from "./board.ts";
+import { candidates, conflicts } from "./rules.ts";
 
 // Returns at most `limit` solutions. A limit of two is enough to check uniqueness.
 export function solve(board: Board, limit = 1, randomize = false): Board[] {
@@ -43,8 +43,9 @@ export function shuffle(items: number[]): number[] {
     const other = Math.floor(Math.random() * (index + 1));
     const current = items[index];
     const selected = items[other];
-    if (current === undefined || selected === undefined)
+    if (current === undefined || selected === undefined) {
       throw new Error("无法打乱缺少元素的数组。");
+    }
     items[index] = selected;
     items[other] = current;
   }
