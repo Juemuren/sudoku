@@ -1,12 +1,12 @@
 import { useInput } from "ink";
 import { type Dispatch, type SetStateAction, useState } from "react";
-import type { GameState } from "../../app/gameState.ts";
-import { loadFromStore } from "../../app/gameLoad.ts";
-import { saveToStore } from "../../app/gameSave.ts";
+import type { GameState } from "../../../app/gameState.ts";
+import { loadFromStore } from "../../../app/gameLoad.ts";
+import { saveToStore } from "../../../app/gameSave.ts";
 import {
   fileGameStore,
   resolveGameArchivePath,
-} from "../../storage/fileGameStore.ts";
+} from "../storage/fileGameStore.ts";
 
 export type GameArchiveDialog = {
   mode: "save" | "load" | "overwrite";

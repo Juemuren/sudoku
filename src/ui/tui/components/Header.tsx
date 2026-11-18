@@ -1,5 +1,5 @@
 import { Text } from "ink";
-import type { Difficulty } from "../../domain/generator.ts";
+import type { Difficulty } from "../../../domain/generator.ts";
 
 const difficultyLabels: Record<Difficulty, string> = {
   easy: "简单",

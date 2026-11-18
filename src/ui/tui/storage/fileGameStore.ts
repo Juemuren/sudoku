@@ -1,8 +1,8 @@
 import { dirname, resolve } from "@std/path";
-import type { GameState } from "../app/gameState.ts";
-import type { GameStore } from "../app/gameStore.ts";
-import { parseGameArchive } from "../app/gameLoad.ts";
-import { serializeGame } from "../app/gameSave.ts";
+import type { GameState } from "../../../app/gameState.ts";
+import type { GameStore } from "../../../app/gameStore.ts";
+import { parseGameArchive } from "../../../app/gameLoad.ts";
+import { serializeGame } from "../../../app/gameSave.ts";
 import { validateGameArchive } from "./validateGameArchive.ts";
 
 const MAX_BYTES = 64 * 1024;

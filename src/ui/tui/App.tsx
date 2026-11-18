@@ -11,11 +11,11 @@ import {
 } from "../../app/gameState.ts";
 import { gameStats } from "../../app/gameStats.ts";
 import type { Difficulty } from "../../domain/generator.ts";
-import { Footer } from "./Footer.tsx";
-import { Header } from "./Header.tsx";
-import { GameArchivePrompt } from "./GameArchivePrompt.tsx";
-import { SudokuBoard } from "./SudokuBoard.tsx";
-import { useGameArchive } from "./useGameArchive.ts";
+import { Footer } from "./components/Footer.tsx";
+import { GameArchivePrompt } from "./components/GameArchivePrompt.tsx";
+import { Header } from "./components/Header.tsx";
+import { SudokuBoard } from "./components/SudokuBoard.tsx";
+import { useGameArchive } from "./hooks/useGameArchive.ts";
 
 export function App() {
   const { exit } = useApp();

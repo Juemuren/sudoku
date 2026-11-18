@@ -1,5 +1,5 @@
-import type { GameState } from "../app/gameState.ts";
-import type { GameArchive } from "../app/gameArchive.ts";
+import type { GameState } from "../../../app/gameState.ts";
+import type { GameArchive } from "../../../app/gameArchive.ts";
 
 const VERIFY_TIMEOUT_MS = 5_000;
 

@@ -1,7 +1,7 @@
 import { Text } from "ink";
 import { Fragment } from "react";
-import type { GameState } from "../../app/gameState.ts";
-import { SIZE } from "../../domain/board.ts";
+import type { GameState } from "../../../app/gameState.ts";
+import { SIZE } from "../../../domain/board.ts";
 
 const rows = Array.from({ length: SIZE }, (_, index) => index);
 const columns = Array.from({ length: SIZE }, (_, index) => index);

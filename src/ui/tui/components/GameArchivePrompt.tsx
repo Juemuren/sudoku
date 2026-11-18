@@ -1,5 +1,5 @@
 import { Text } from "ink";
-import type { GameArchiveDialog } from "./useGameArchive.ts";
+import type { GameArchiveDialog } from "../hooks/useGameArchive.ts";
 
 export function GameArchivePrompt({
   dialog,

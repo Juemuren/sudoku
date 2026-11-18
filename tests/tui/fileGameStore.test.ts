@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import { join } from "@std/path";
-import type { GameState } from "../src/app/gameState.ts";
-import { loadFromFile, saveToFile } from "../src/storage/fileGameStore.ts";
+import type { GameState } from "../../src/app/gameState.ts";
+import {
+  loadFromFile,
+  saveToFile,
+} from "../../src/ui/tui/storage/fileGameStore.ts";
 
 const puzzle =
   "530070000600195000098000060800060003400803001700020006060000280000419005000080079"

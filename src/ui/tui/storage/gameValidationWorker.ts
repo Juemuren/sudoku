@@ -1,5 +1,5 @@
-import { restoreGame } from "../app/gameLoad.ts";
-import type { GameArchive } from "../app/gameArchive.ts";
+import { restoreGame } from "../../../app/gameLoad.ts";
+import type { GameArchive } from "../../../app/gameArchive.ts";
 
 self.onmessage = (event: MessageEvent<GameArchive>) => {
   try {

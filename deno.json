@@ -22,11 +22,11 @@
     "web:dev": "deno run -A npm:vite@7.2.2 --config src/ui/webui/vite.config.ts",
     "web:build": "deno run -A npm:vite@7.2.2 build --config src/ui/webui/vite.config.ts",
     "web:preview": "deno run -A npm:vite@7.2.2 preview --config src/ui/webui/vite.config.ts",
-    "check": "deno check src/ui/tui/index.tsx src/ui/webui/main.tsx tests/*.test.ts",
+    "check": "deno check src/ui/tui/index.tsx src/ui/webui/main.tsx tests/*.test.ts tests/tui/*.test.ts",
     "test": "deno test -A tests/",
     "lint": "deno lint",
     "fmt": "deno fmt",
-    "build": "deno compile -A --include src/storage/gameValidationWorker.ts --output dist/sudoku src/ui/tui/index.tsx"
+    "build": "deno compile -A --include src/ui/tui/storage/gameValidationWorker.ts --output dist/sudoku src/ui/tui/index.tsx"
   },
   "fmt": {
     "lineWidth": 80,

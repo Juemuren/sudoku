@@ -8,8 +8,10 @@ src/
   app/            应用层
   ui/             界面层
     tui/              终端界面
+      components/      终端组件
+      hooks/           终端钩子
+      storage/         终端存储
     webui/            浏览器界面
-  storage/        存储层
 ```
 
 ## 领域：`src/domain/`
@@ -37,25 +39,32 @@ src/
 
 界面层负责展示内容和处理用户事件，依赖领域层和应用层。
 
-### 终端界面：`src/ui/tui/`
+### 终端界面：`tui/`
 
-终端界面使用 Ink，由 Ink 组件负责展示内容和处理用户事件。
+终端界面使用 Ink。
 
-`useGameArchive.ts` 收集路径、显示覆盖确认与操作结果，并调用存档用例。
+#### 终端组件 `components/`
 
-### 浏览器界面：`src/ui/webui/`
+- `SudokuBoard.tsx` 展示棋盘
+- `Header.tsx` 显示统计信息
+- `Footer.tsx` 显示操作提示
+- `GameArchivePrompt.tsx` 显示存档对话
 
-浏览器界面使用 React，由 React 组件负责展示内容和处理用户事件。
+#### 终端钩子 `hooks/`
 
-`App.tsx` 展示棋盘、统计和操作按钮，并调用应用层的游戏用例。
+- `useGameArchive.ts` 收集路径、处理覆盖确认与操作结果，并调用存档用例。
 
-## 存储：`src/storage/`
+#### 终端存储 `storage/`
 
 - `fileGameStore.ts` 实现终端的 `GameStore`，负责文件读写。
 - `validateGameArchive.ts` 在 Worker 中恢复文件存档，并设置校验超时。
 - `gameValidationWorker.ts` 是文件存档校验使用的 Worker 入口。
 
-存档格式和数独校验规则由应用层与领域层共用。
+### 浏览器界面：`webui/`
+
+浏览器界面使用 React。
+
+`App.tsx` 展示棋盘、统计和操作按钮，并调用应用层的游戏用例。
 
 ## 存档流程
 
