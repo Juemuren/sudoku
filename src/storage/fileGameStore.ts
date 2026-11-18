@@ -1,18 +1,19 @@
 import { dirname, resolve } from "@std/path";
 import type { GameState } from "../app/gameState.ts";
-import type { SaveStore } from "../app/saveLoad.ts";
-import { parseSavedGame, serializeGame } from "../app/saveGame.ts";
-import { verifySavedGame } from "./verifySavedGame.ts";
+import type { GameStore } from "../app/gameStore.ts";
+import { parseGameArchive } from "../app/gameLoad.ts";
+import { serializeGame } from "../app/gameSave.ts";
+import { validateGameArchive } from "./validateGameArchive.ts";
 
 const MAX_BYTES = 64 * 1024;
 
-export function savePath(input: string): string {
+export function resolveGameArchivePath(input: string): string {
   if (!input.trim()) throw new Error("请输入存档路径。");
   return resolve(input.trim());
 }
 
 export async function saveToFile(path: string, game: GameState): Promise<void> {
-  const target = savePath(path);
+  const target = resolveGameArchivePath(path);
   const temporary = resolve(dirname(target), `.${crypto.randomUUID()}.tmp`);
   try {
     await Deno.writeTextFile(temporary, serializeGame(game), {
@@ -28,7 +29,7 @@ export async function saveToFile(path: string, game: GameState): Promise<void> {
 
 export async function fileExists(path: string): Promise<boolean> {
   try {
-    await Deno.stat(savePath(path));
+    await Deno.stat(resolveGameArchivePath(path));
     return true;
   } catch (error) {
     if (error instanceof Deno.errors.NotFound) return false;
@@ -37,7 +38,7 @@ export async function fileExists(path: string): Promise<boolean> {
 }
 
 export async function loadFromFile(path: string): Promise<GameState> {
-  const target = savePath(path);
+  const target = resolveGameArchivePath(path);
   const handle = await Deno.open(target, { read: true });
   let data: string;
   try {
@@ -56,10 +57,10 @@ export async function loadFromFile(path: string): Promise<GameState> {
   } finally {
     handle.close();
   }
-  return verifySavedGame(parseSavedGame(data));
+  return validateGameArchive(parseGameArchive(data));
 }
 
-export const fileSaveStore: SaveStore = {
+export const fileGameStore: GameStore = {
   exists: fileExists,
   save: saveToFile,
   load: loadFromFile,

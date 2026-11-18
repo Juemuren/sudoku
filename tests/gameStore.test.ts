@@ -1,16 +1,14 @@
 import assert from "node:assert/strict";
 import type { GameState } from "../src/app/gameState.ts";
-import {
-  loadFromStore,
-  type SaveStore,
-  saveToStore,
-} from "../src/app/saveLoad.ts";
+import { saveToStore } from "../src/app/gameSave.ts";
+import { loadFromStore } from "../src/app/gameLoad.ts";
+import type { GameStore } from "../src/app/gameStore.ts";
 
 Deno.test("已有存档需要确认覆盖，确认后才写入", async () => {
   let writes = 0;
   let checks = 0;
   const game = {} as GameState;
-  const store: SaveStore = {
+  const store: GameStore = {
     exists: (_location) => {
       checks++;
       return Promise.resolve(true);

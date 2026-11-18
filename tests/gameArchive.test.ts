@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { join } from "@std/path";
 import type { GameState } from "../src/app/gameState.ts";
-import { loadFromFile, saveToFile } from "../src/storage/fileSaveStore.ts";
+import { loadFromFile, saveToFile } from "../src/storage/fileGameStore.ts";
 
 const puzzle =
   "530070000600195000098000060800060003400803001700020006060000280000419005000080079"
@@ -27,10 +27,13 @@ function game(): GameState {
   };
 }
 
-async function withSaveFile(run: (path: string) => Promise<void>) {
+async function withGameArchive(run: (path: string) => Promise<void>) {
   const root = join(Deno.cwd(), ".tmp");
   await Deno.mkdir(root, { recursive: true });
-  const directory = await Deno.makeTempDir({ dir: root, prefix: "save-test-" });
+  const directory = await Deno.makeTempDir({
+    dir: root,
+    prefix: "game-archive-test-",
+  });
   try {
     await run(join(directory, "game.json"));
   } finally {
@@ -39,7 +42,7 @@ async function withSaveFile(run: (path: string) => Promise<void>) {
 }
 
 Deno.test("保存后恢复进度和计时，保留玩家填错的数字", async () => {
-  await withSaveFile(async (path) => {
+  await withGameArchive(async (path) => {
     const current = game();
     current.board[2] = 9;
     await saveToFile(path, current);
@@ -57,7 +60,7 @@ Deno.test("保存后恢复进度和计时，保留玩家填错的数字", async 
 });
 
 Deno.test("格式错误和改动给定数字的存档不能加载", async () => {
-  await withSaveFile(async (path) => {
+  await withGameArchive(async (path) => {
     await Deno.writeTextFile(path, "{bad json");
     await assert.rejects(loadFromFile(path), /JSON/);
     await Deno.writeTextFile(path, JSON.stringify({ version: 2, game: {} }));
@@ -80,14 +83,14 @@ Deno.test("格式错误和改动给定数字的存档不能加载", async () => 
 });
 
 Deno.test("过大的存档在解析前被拒绝", async () => {
-  await withSaveFile(async (path) => {
+  await withGameArchive(async (path) => {
     await Deno.writeTextFile(path, " ".repeat(64 * 1024 + 1));
     await assert.rejects(loadFromFile(path), /过大/);
   });
 });
 
 Deno.test("给定数字冲突和多解题目不能加载", async () => {
-  await withSaveFile(async (path) => {
+  await withGameArchive(async (path) => {
     const saved = {
       version: 1,
       game: {

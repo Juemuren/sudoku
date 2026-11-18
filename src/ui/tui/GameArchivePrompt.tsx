@@ -1,11 +1,11 @@
 import { Text } from "ink";
-import type { SaveLoadDialog } from "./useSaveLoad.ts";
+import type { GameArchiveDialog } from "./useGameArchive.ts";
 
-export function SaveLoadPrompt({
+export function GameArchivePrompt({
   dialog,
   busy,
 }: {
-  dialog: SaveLoadDialog;
+  dialog: GameArchiveDialog;
   busy: boolean;
 }) {
   if (busy) return <Text color="yellow">处理中…</Text>;
@@ -13,7 +13,7 @@ export function SaveLoadPrompt({
   return <Text color="cyan">{promptText(dialog)}</Text>;
 }
 
-function promptText(dialog: NonNullable<SaveLoadDialog>): string {
+function promptText(dialog: NonNullable<GameArchiveDialog>): string {
   switch (dialog.mode) {
     case "overwrite":
       return `覆盖 ${dialog.path}？Y 确认 / N 返回 / Esc 取消`;

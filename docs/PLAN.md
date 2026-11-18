@@ -6,7 +6,7 @@
 
 - 使用 React + Vite 构建界面。
 - 复用 `domain/` 和 `app/`。
-- 在浏览器侧实现 `SaveStore`，设计存档导入、导出与覆盖确认。
+- 在浏览器侧实现 `GameStore`，设计存档导入、导出与覆盖确认。
 
 ## Human Solver
 

@@ -27,8 +27,10 @@ src/
 
 - `gameState.ts` 处理新游戏、输入、提示和撤销。
 - `gameStats.ts` 计算界面需要的统计值。
-- `saveGame.ts` 定义存档格式、解析 JSON，并恢复游戏状态。
-- `saveLoad.ts` 定义 `SaveStore` 接口和覆盖确认策略。
+- `gameArchive.ts` 定义存档数据结构和校验规则。
+- `gameStore.ts` 定义平台存储接口 `GameStore`。
+- `gameSave.ts` 处理覆盖确认和游戏序列化。
+- `gameLoad.ts` 解析存档并恢复游戏状态。
 
 ## 界面：`src/ui/`
 
@@ -38,7 +40,7 @@ src/
 
 终端界面使用 Ink，由 Ink 组件负责展示内容和处理用户事件。
 
-`useSaveLoad.ts` 收集路径、显示覆盖确认与操作结果，并调用存档用例。
+`useGameArchive.ts` 收集路径、显示覆盖确认与操作结果，并调用存档用例。
 
 ### 浏览器界面：`src/ui/webui`
 
@@ -46,11 +48,11 @@ src/
 
 ## 存储：`src/storage/`
 
-`fileSaveStore.ts` 实现 `SaveStore`，供 TUI 使用。
+`fileGameStore.ts` 实现 `GameStore`，供 TUI 使用。
 它解析本地路径、限制读取大小，并通过临时文件写入存档。
 存档格式和数独校验留在应用层与领域层。
 
-`verifySavedGame.ts` 和 `saveWorker.ts` 在 Worker 中恢复存档，
+`validateGameArchive.ts` 和 `gameValidationWorker.ts` 在 Worker 中恢复存档，
 并为题目校验设置超时。Worker 不定义校验规则。
 
 ### 存档流程
@@ -58,12 +60,12 @@ src/
 #### 保存
 
 1. TUI 取得并解析路径。
-2. `app/saveLoad.ts` 判断是否需要覆盖确认。
-3. `fileSaveStore.ts` 调用 `app/saveGame.ts` 序列化并写入文件。
+2. `app/gameSave.ts` 判断是否需要覆盖确认。
+3. `fileGameStore.ts` 调用 `app/gameSave.ts` 序列化并写入文件。
 
 #### 加载
 
-1. `fileSaveStore.ts` 读取文件并限制大小。
-2. `app/saveGame.ts` 检查 JSON 结构。
+1. `fileGameStore.ts` 读取文件并限制大小。
+2. `app/gameLoad.ts` 检查 JSON 结构。
 3. Worker 调用应用层恢复函数，由 `domain/validation.ts` 校验题目。
 4. TUI 更新游戏状态。玩家填错的数字会保留。

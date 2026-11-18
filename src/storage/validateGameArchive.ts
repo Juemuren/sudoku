@@ -1,15 +1,18 @@
 import type { GameState } from "../app/gameState.ts";
-import type { SavedGame } from "../app/saveGame.ts";
+import type { GameArchive } from "../app/gameArchive.ts";
 
 const VERIFY_TIMEOUT_MS = 5_000;
 
 type WorkerResult = { ok: boolean; game?: GameState; message?: string };
 
-export function verifySavedGame(saved: SavedGame): Promise<GameState> {
+export function validateGameArchive(fileData: GameArchive): Promise<GameState> {
   return new Promise((resolve, reject) => {
-    const worker = new Worker(new URL("./saveWorker.ts", import.meta.url), {
-      type: "module",
-    });
+    const worker = new Worker(
+      new URL("./gameValidationWorker.ts", import.meta.url),
+      {
+        type: "module",
+      },
+    );
     const timer = setTimeout(() => {
       finish(() => reject(new Error("题目验证超时，请检查存档。")));
     }, VERIFY_TIMEOUT_MS);
@@ -31,6 +34,6 @@ export function verifySavedGame(saved: SavedGame): Promise<GameState> {
       event.preventDefault();
       finish(() => reject(new Error("题目验证进程意外退出。")));
     };
-    worker.postMessage(saved);
+    worker.postMessage(fileData);
   });
 }

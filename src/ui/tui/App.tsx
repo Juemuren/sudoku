@@ -13,16 +13,16 @@ import { gameStats } from "../../app/gameStats.ts";
 import type { Difficulty } from "../../domain/generator.ts";
 import { Footer } from "./Footer.tsx";
 import { Header } from "./Header.tsx";
-import { SaveLoadPrompt } from "./SaveLoadPrompt.tsx";
+import { GameArchivePrompt } from "./GameArchivePrompt.tsx";
 import { SudokuBoard } from "./SudokuBoard.tsx";
-import { useSaveLoad } from "./useSaveLoad.ts";
+import { useGameArchive } from "./useGameArchive.ts";
 
 export function App() {
   const { exit } = useApp();
   const { columns, rows } = useWindowSize();
   const [game, setGame] = useState<GameState>(() => newGame());
   const [now, setNow] = useState(Date.now());
-  const saveLoad = useSaveLoad(game, setGame);
+  const gameArchive = useGameArchive(game, setGame);
 
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 1000);
@@ -30,8 +30,8 @@ export function App() {
   }, []);
 
   useInput((input, key) => {
-    if (saveLoad.active || input === "s" || input === "l") return;
-    saveLoad.clearStatus();
+    if (gameArchive.active || input === "s" || input === "l") return;
+    gameArchive.clearStatus();
     if (input === "q" || (key.ctrl && input === "c")) {
       exit();
       return;
@@ -59,12 +59,12 @@ export function App() {
     }
     const difficulty = difficultyKeys[input];
     if (difficulty) {
-      saveLoad.forgetLocation();
+      gameArchive.forgetLocation();
       setGame(newGame(difficulty));
       return;
     }
     if (input === "n") {
-      saveLoad.forgetLocation();
+      gameArchive.forgetLocation();
       setGame((state) => newGame(state.difficulty));
     }
   });
@@ -91,11 +91,14 @@ export function App() {
         />
         <SudokuBoard game={game} badCells={badCells} />
         <Footer
-          message={saveLoad.status || game.message}
+          message={gameArchive.status || game.message}
           solved={solved}
           conflictCount={badCells.size}
         />
-        <SaveLoadPrompt dialog={saveLoad.dialog} busy={saveLoad.busy} />
+        <GameArchivePrompt
+          dialog={gameArchive.dialog}
+          busy={gameArchive.busy}
+        />
       </Box>
     </Box>
   );

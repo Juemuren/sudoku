@@ -1,19 +1,23 @@
 import { useInput } from "ink";
 import { type Dispatch, type SetStateAction, useState } from "react";
 import type { GameState } from "../../app/gameState.ts";
-import { loadFromStore, saveToStore } from "../../app/saveLoad.ts";
-import { fileSaveStore, savePath } from "../../storage/fileSaveStore.ts";
+import { loadFromStore } from "../../app/gameLoad.ts";
+import { saveToStore } from "../../app/gameSave.ts";
+import {
+  fileGameStore,
+  resolveGameArchivePath,
+} from "../../storage/fileGameStore.ts";
 
-export type SaveLoadDialog = {
+export type GameArchiveDialog = {
   mode: "save" | "load" | "overwrite";
   path: string;
 } | null;
 
-export function useSaveLoad(
+export function useGameArchive(
   game: GameState,
   setGame: Dispatch<SetStateAction<GameState>>,
 ) {
-  const [dialog, setDialog] = useState<SaveLoadDialog>(null);
+  const [dialog, setDialog] = useState<GameArchiveDialog>(null);
   const [location, setLocation] = useState<string | null>(null);
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
@@ -21,9 +25,9 @@ export function useSaveLoad(
   async function save(path: string, overwrite = false) {
     setBusy(true);
     try {
-      const target = savePath(path);
+      const target = resolveGameArchivePath(path);
       const result = await saveToStore(
-        fileSaveStore,
+        fileGameStore,
         target,
         game,
         location,
@@ -46,8 +50,8 @@ export function useSaveLoad(
   async function load(path: string) {
     setBusy(true);
     try {
-      const location = savePath(path);
-      const loaded = await loadFromStore(fileSaveStore, location);
+      const location = resolveGameArchivePath(path);
+      const loaded = await loadFromStore(fileGameStore, location);
       setGame(loaded);
       setLocation(location);
       setStatus(`已加载 ${location}`);
@@ -59,7 +63,7 @@ export function useSaveLoad(
     }
   }
 
-  function submit(current: NonNullable<SaveLoadDialog>) {
+  function submit(current: NonNullable<GameArchiveDialog>) {
     if (!current.path.trim()) {
       setStatus("请输入存档路径。");
       return;
@@ -74,7 +78,7 @@ export function useSaveLoad(
       if (input === "s" || input === "l") {
         setDialog({
           mode: input === "s" ? "save" : "load",
-          path: location ?? "sudoku-save.json",
+          path: location ?? "sudoku-archive.json",
         });
         setStatus("");
       }
