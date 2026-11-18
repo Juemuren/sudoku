@@ -5,84 +5,73 @@ type Props = {
   message: string;
   solved: boolean;
   conflictCount: number;
+  compact: boolean;
+  showHelp: boolean;
+  collapsed: boolean;
 };
 
-type KeyHint = {
-  key: string;
-  action: string;
-};
-
-const editingHints: KeyHint[] = [
-  { key: "←↑↓→", action: "移动" },
-  { key: "1–9", action: "填入" },
-  { key: "0/Backspace", action: "清除" },
-  { key: "H", action: "提示" },
-  { key: "U", action: "撤销" },
-];
-
-const gameHints: KeyHint[] = [
-  { key: "E", action: "简单" },
-  { key: "M", action: "中等" },
-  { key: "D", action: "困难" },
-  { key: "N", action: "新局" },
-  { key: "S", action: "保存" },
-  { key: "L", action: "加载" },
-  { key: "Q", action: "退出" },
-];
-
-function KeyGroup({
-  title,
-  hints,
-  badgeColor,
-  keyColor,
+function HintRow({
+  items,
 }: {
-  title: string;
-  hints: KeyHint[];
-  badgeColor: string;
-  keyColor: string;
+  items: { keyLabel: string; action: string }[];
 }) {
   return (
-    <Box flexWrap="wrap" justifyContent="center" columnGap={2}>
-      <Text
-        bold
-        color={colors.canvas}
-        backgroundColor={badgeColor}
-      >
-        {` ${title} `}
-      </Text>
-      {hints.map(({ key, action }) => (
-        <Box key={key}>
-          <Text bold color={keyColor}>
-            [{key}]
-          </Text>
-          <Text color={colors.muted}>{action}</Text>
+    <Box columnGap={3}>
+      {items.map(({ keyLabel, action }) => (
+        <Box key={keyLabel}>
+          <Text color={colors.accentText}>{keyLabel}</Text>
+          <Text color={colors.muted}>{` ${action}`}</Text>
         </Box>
       ))}
     </Box>
   );
 }
 
-export function Footer({ message, solved, conflictCount }: Props) {
+export function Footer({
+  message,
+  solved,
+  conflictCount,
+  compact,
+  showHelp,
+  collapsed,
+}: Props) {
+  const status = `${message}${
+    conflictCount ? ` 冲突格：${conflictCount}` : ""
+  }`;
   return (
-    <Box flexDirection="column" alignItems="center" width="100%">
-      <Text color={messageColor(solved, conflictCount)}>
-        {message}
-        {conflictCount ? `冲突格：${conflictCount}` : ""}
+    <Box flexDirection="column" width="100%">
+      <Text color={messageColor(solved, conflictCount)} wrap="truncate-end">
+        {status}
       </Text>
-      <Box flexDirection="column" marginTop={1} width="100%">
-        <KeyGroup
-          title="操作"
-          hints={editingHints}
-          badgeColor={colors.accent}
-          keyColor={colors.accentText}
-        />
-        <KeyGroup
-          title="对局"
-          hints={gameHints}
-          badgeColor={colors.eyebrow}
-          keyColor={colors.actionText}
-        />
-      </Box>
+      {compact && (collapsed && !showHelp
+        ? <Text color={colors.muted}>? 查看按键</Text>
+        : (
+          <Box flexDirection="column" marginTop={1}>
+            <HintRow
+              items={[
+                { keyLabel: "←↑↓→", action: "移动" },
+                { keyLabel: "1–9", action: "填入" },
+                { keyLabel: "0/⌫", action: "清除" },
+              ]}
+            />
+            <HintRow
+              items={[
+                { keyLabel: "U", action: "撤销" },
+                { keyLabel: "H", action: "提示" },
+                { keyLabel: "E/M/D", action: "难度" },
+              ]}
+            />
+            <HintRow
+              items={[
+                { keyLabel: "N", action: "新局" },
+                { keyLabel: "Q", action: "退出" },
+                { keyLabel: "S", action: "保存" },
+                { keyLabel: "L", action: "加载" },
+              ]}
+            />
+            {collapsed && <Text color={colors.muted}>? 返回棋盘</Text>}
+          </Box>
+        ))}
     </Box>
   );
 }

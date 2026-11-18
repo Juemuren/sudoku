@@ -1,4 +1,4 @@
-import { Text } from "ink";
+import { Box, Text } from "ink";
 import type { Difficulty } from "../../../domain/generator.ts";
 import { colors } from "../../styles/colors.ts";
 
@@ -7,12 +7,14 @@ const difficultyLabels: Record<Difficulty, string> = {
   medium: "中等",
   hard: "困难",
 };
+const titleDivider = " / ";
 
 type Props = {
   difficulty: Difficulty;
   elapsedSeconds: number;
   remaining: number;
   hintsUsed: number;
+  compact: boolean;
 };
 
 export function Header({
@@ -20,22 +22,27 @@ export function Header({
   elapsedSeconds,
   remaining,
   hintsUsed,
+  compact,
 }: Props) {
   const time = `${String(Math.floor(elapsedSeconds / 60)).padStart(2, "0")}:${
     String(elapsedSeconds % 60).padStart(2, "0")
   }`;
 
   return (
-    <Text>
-      <Text bold color={colors.eyebrow}>数独</Text>{"  "}
-      <Text color={colors.muted}>难度:</Text>
-      <Text bold color={colors.text}>{difficultyLabels[difficulty]}</Text>{"  "}
-      <Text color={colors.muted}>用时:</Text>
-      <Text bold color={colors.accent}>{time}</Text>{"  "}
-      <Text color={colors.muted}>空格:</Text>
-      <Text bold color={colors.success}>{remaining}</Text>{"  "}
-      <Text color={colors.muted}>提示:</Text>
-      <Text bold color={colors.warning}>{hintsUsed}</Text>
-    </Text>
+    <Box width="100%" justifyContent="space-between">
+      <Text wrap="truncate-end">
+        <Text bold color={colors.eyebrow}>数独</Text>
+        <Text color={colors.muted}>{titleDivider}</Text>
+        <Text bold color={colors.text}>{difficultyLabels[difficulty]}</Text>
+      </Text>
+      <Text wrap="truncate-end">
+        <Text color={colors.muted}>{compact ? " " : "用时 "}</Text>
+        <Text color={colors.accent}>{time}</Text>
+        <Text color={colors.muted}>{compact ? " 空" : "   空格 "}</Text>
+        <Text color={colors.success}>{remaining}</Text>
+        <Text color={colors.muted}>{compact ? " 提" : "   提示 "}</Text>
+        <Text color={colors.warning}>{hintsUsed}</Text>
+      </Text>
+    </Box>
   );
 }

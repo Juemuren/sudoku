@@ -1,4 +1,4 @@
-import { Box, useApp, useInput, useWindowSize } from "ink";
+import { Box, Text, useApp, useInput, useWindowSize } from "ink";
 import { useEffect, useState } from "react";
 import {
   type Direction,
@@ -11,9 +11,10 @@ import {
 } from "../../app/gameState.ts";
 import { gameStats } from "../../app/gameStats.ts";
 import type { Difficulty } from "../../domain/generator.ts";
+import { colors } from "../styles/colors.ts";
 import { Footer } from "./components/Footer.tsx";
-import { GameArchivePrompt } from "./components/GameArchivePrompt.tsx";
 import { Header } from "./components/Header.tsx";
+import { Sidebar } from "./components/Sidebar.tsx";
 import { SudokuBoard } from "./components/SudokuBoard.tsx";
 import { useGameArchive } from "./hooks/useGameArchive.ts";
 
@@ -22,6 +23,7 @@ export function App() {
   const { columns, rows } = useWindowSize();
   const [game, setGame] = useState<GameState>(() => newGame());
   const [now, setNow] = useState(Date.now());
+  const [showHelp, setShowHelp] = useState(false);
   const gameArchive = useGameArchive(game, setGame);
 
   useEffect(() => {
@@ -32,6 +34,10 @@ export function App() {
   useInput((input, key) => {
     if (gameArchive.active || input === "s" || input === "l") return;
     gameArchive.clearStatus();
+    if (input === "?" && columns < 64 && rows < 22) {
+      setShowHelp((value) => !value);
+      return;
+    }
     if (input === "q" || (key.ctrl && input === "c")) {
       exit();
       return;
@@ -70,6 +76,9 @@ export function App() {
   });
 
   const { badCells, solved, remaining, elapsedSeconds } = gameStats(game, now);
+  const compact = columns < 64;
+  const collapsed = compact && rows < 22;
+  const showBoard = !(collapsed && showHelp);
   return (
     <Box
       width={columns}
@@ -88,16 +97,58 @@ export function App() {
           elapsedSeconds={elapsedSeconds}
           remaining={remaining}
           hintsUsed={game.hintsUsed}
+          compact={compact}
         />
-        <SudokuBoard game={game} badCells={badCells} />
+        {!compact && <Text color={colors.gridBorder}>{"─".repeat(62)}</Text>}
+        {showBoard && (
+          <Box
+            width="100%"
+            justifyContent="center"
+            marginTop={compact ? 0 : 1}
+            marginBottom={1}
+          >
+            <Box width={25} flexShrink={0} flexDirection="column">
+              <SudokuBoard game={game} badCells={badCells} />
+            </Box>
+            {!compact && (
+              <>
+                <Box marginX={2} flexDirection="column">
+                  {Array.from(
+                    { length: 13 },
+                    (_, index) => (
+                      <Text key={index} color={colors.gridBorder}>│</Text>
+                    ),
+                  )}
+                </Box>
+                <Box width={32} flexDirection="column">
+                  <Sidebar
+                    game={game}
+                    badCells={badCells}
+                    dialog={gameArchive.dialog}
+                    busy={gameArchive.busy}
+                  />
+                </Box>
+              </>
+            )}
+          </Box>
+        )}
+        {compact && gameArchive.active && (
+          <Sidebar
+            game={game}
+            badCells={badCells}
+            dialog={gameArchive.dialog}
+            busy={gameArchive.busy}
+            compact
+          />
+        )}
         <Footer
-          message={gameArchive.status || game.message}
+          message={gameArchive.status ||
+            (gameArchive.active ? " " : game.message)}
           solved={solved}
           conflictCount={badCells.size}
-        />
-        <GameArchivePrompt
-          dialog={gameArchive.dialog}
-          busy={gameArchive.busy}
+          compact={compact && !gameArchive.active}
+          showHelp={showHelp}
+          collapsed={collapsed}
         />
       </Box>
     </Box>
