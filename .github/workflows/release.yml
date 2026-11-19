@@ -1,0 +1,74 @@
+name: Publish Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.9.7
+          cache: true
+      - run: deno install --frozen-lockfile
+      - run: deno task check
+      - run: deno task test
+
+  binaries:
+    needs: check
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            platform: windows-x64
+          - os: ubuntu-latest
+            platform: linux-x64
+          - os: macos-latest
+            platform: macos-arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.9.7
+          cache: true
+      - run: deno install --frozen-lockfile
+      - run: deno task tui:build
+      - name: Package Unix executable
+        if: runner.os != 'Windows'
+        shell: sh
+        run: tar -czf sudoku-${{ matrix.platform }}.tar.gz -C dist sudoku
+      - name: Package Windows executable
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: Compress-Archive -Path dist/sudoku.exe -DestinationPath sudoku-${{ matrix.platform }}.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sudoku-${{ matrix.platform }}
+          path: sudoku-${{ matrix.platform }}.*
+          if-no-files-found: error
+
+  publish:
+    needs: binaries
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: sudoku-*
+          path: release-assets
+          merge-multiple: true
+      - name: Create GitHub Release
+        shell: sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" release-assets/* --generate-notes --verify-tag
