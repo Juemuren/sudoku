@@ -1,5 +1,5 @@
 import { columnOf, rowOf } from "../domain/board.ts";
-import { findHumanStep } from "../domain/humanSolver.ts";
+import { findHumanStep } from "../domain/strategy.ts";
 import { conflicts, isSolved } from "../domain/rules.ts";
 import { fillHintCell, type GameState } from "./gameState.ts";
 

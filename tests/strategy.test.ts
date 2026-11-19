@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { findHumanStep } from "../src/domain/humanSolver.ts";
+import { findHumanStep } from "../src/domain/strategy.ts";
 import { candidates, conflicts } from "../src/domain/rules.ts";
 
 const nakedSingle = [

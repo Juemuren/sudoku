@@ -23,7 +23,7 @@ src/
 - `validation.ts` 检查唯一解和给定数字是否被修改。
 - `generator.ts` 生成题目。
 - `solver.ts` 用回溯搜索解。
-- `humanSolver.ts` 根据当前棋盘寻找唯一候选数或唯一位置，并给出理由；找不到时不进行猜测。
+- `strategy.ts` 根据当前棋盘寻找唯一候选数或唯一位置，并给出理由；找不到时不进行猜测。
 
 ## 应用：`src/app/`
 
