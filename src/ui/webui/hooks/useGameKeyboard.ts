@@ -1,10 +1,9 @@
 import { type Dispatch, type SetStateAction, useEffect } from "react";
+import { requestAnswer, requestHint } from "../../../app/gameHint.ts";
 import {
   enterValue,
   type GameState,
   moveSelection,
-  requestAnswer,
-  requestHint,
   undo,
 } from "../../../app/gameState.ts";
 import type { Difficulty } from "../../../domain/generator.ts";

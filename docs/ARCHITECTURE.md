@@ -29,7 +29,8 @@ src/
 
 应用层负责游戏状态和存档用例，依赖领域层。
 
-- `gameState.ts` 处理新游戏、输入、提示和撤销。
+- `gameState.ts` 处理新游戏、输入、撤销和辅助填格的通用状态更新。
+- `gameHint.ts` 提供人类推理提示和直接填入答案两种游戏操作。
 - `gameStats.ts` 计算界面需要的统计值。
 - `gameArchive.ts` 定义存档数据结构和校验规则。
 - `gameStore.ts` 定义平台存储接口 `GameStore`。

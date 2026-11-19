@@ -1,13 +1,12 @@
 import { useApp, useInput } from "ink";
 import { useEffect, useState } from "react";
+import { requestAnswer, requestHint } from "../../../app/gameHint.ts";
 import {
   type Direction,
   enterValue,
   type GameState,
   moveSelection,
   newGame,
-  requestAnswer,
-  requestHint,
   undo,
 } from "../../../app/gameState.ts";
 import type { Difficulty } from "../../../domain/generator.ts";

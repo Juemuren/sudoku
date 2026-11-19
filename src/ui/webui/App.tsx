@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
+import { requestAnswer, requestHint } from "../../app/gameHint.ts";
 import {
   enterValue,
   type GameState,
   newGame,
-  requestAnswer,
-  requestHint,
   selectCell,
   undo,
 } from "../../app/gameState.ts";
