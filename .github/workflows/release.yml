@@ -8,20 +8,11 @@ permissions:
   contents: read
 
 jobs:
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.9.7
-          cache: true
-      - run: deno install --frozen-lockfile
-      - run: deno task check
-      - run: deno task test
+  build:
+    uses: ./.github/workflows/build.yml
 
   binaries:
-    needs: check
+    needs: build
     strategy:
       fail-fast: false
       matrix:

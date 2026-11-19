@@ -1,8 +1,11 @@
 name: Build
 
 on:
-  push:
-    branches: [main]
+  workflow_call:
+    inputs:
+      upload-pages:
+        type: boolean
+        default: false
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -24,3 +27,9 @@ jobs:
       - run: deno task test
       - run: deno task tui:build
       - run: deno task webui:build
+      - uses: actions/configure-pages@v5
+        if: inputs.upload-pages
+      - uses: actions/upload-pages-artifact@v4
+        if: inputs.upload-pages
+        with:
+          path: dist/webui
