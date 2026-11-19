@@ -6,9 +6,13 @@
 
 ### 终端界面
 
+前往 <https://github.com/Juemuren/sudoku/releases> 下载可执行程序。
+
 ![terminal](./images/terminal.png)
 
 ### 浏览器界面
+
+前往 <https://juemuren.github.io/sudoku/> 访问站点。
 
 ![browser](./images/browser.png)
 
