@@ -2,8 +2,10 @@ import assert from "node:assert/strict";
 import {
   enterValue,
   newGame,
+  requestAnswer,
   requestHint,
   selectCell,
+  undo,
 } from "../src/app/gameState.ts";
 import { gameStats } from "../src/app/gameStats.ts";
 import { generatePuzzle } from "../src/domain/generator.ts";
@@ -53,6 +55,30 @@ Deno.test("错误填数时提示不改棋盘或计数", () => {
   assert.deepEqual(hinted.board, entered.board);
   assert.equal(hinted.hintsUsed, entered.hintsUsed);
   assert.match(hinted.message, /冲突|填错/);
+});
+
+Deno.test("答案修正首个错误格，记录次数且可撤销", () => {
+  const start = newGame("easy");
+  const empty = start.board.indexOf(0);
+  const wrong = start.solution[empty] === 1 ? 2 : 1;
+  const entered = enterValue(selectCell(start, empty), wrong);
+  const answered = requestAnswer(entered);
+  assert.equal(answered.selected, empty);
+  assert.equal(answered.board[empty], start.solution[empty]);
+  assert.equal(answered.hintsUsed, entered.hintsUsed + 1);
+  assert.match(answered.message, /答案：第 .*列是/);
+  const reverted = undo(answered);
+  assert.deepEqual(reverted.board, entered.board);
+  assert.equal(reverted.hintsUsed, entered.hintsUsed);
+});
+
+Deno.test("完成棋盘后答案不改棋盘或计数", () => {
+  const start = newGame("easy");
+  const complete = { ...start, board: [...start.solution] };
+  const answered = requestAnswer(complete);
+  assert.deepEqual(answered.board, complete.board);
+  assert.equal(answered.hintsUsed, complete.hintsUsed);
+  assert.equal(answered.message, "没有需要答案的格子。");
 });
 
 Deno.test("手动解出数独后用时不再增加", () => {

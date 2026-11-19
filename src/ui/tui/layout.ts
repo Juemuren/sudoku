@@ -10,8 +10,8 @@ export const RULE_WIDTH = 1;
 // deno-fmt-ignore
 export const SIDEBAR_WIDTH = CONTENT_WIDTH - BOARD_WIDTH - RULE_GAP * 2 - RULE_WIDTH;
 
-// Header, board, status, three help rows, their spacing, and outer padding.
-export const EXPANDED_COMPACT_MIN_ROWS = 22;
+// Header, board, status, four help rows, their spacing, and outer padding.
+export const EXPANDED_COMPACT_MIN_ROWS = 23;
 
 export const KEY_LABEL_WIDTH = 8;
 export const KEY_GROUP_GAP = 3;

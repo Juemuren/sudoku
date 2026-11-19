@@ -85,6 +85,7 @@ export function Sidebar(
         items={[
           { keyLabel: "U", action: "撤销" },
           { keyLabel: "H", action: "提示" },
+          { keyLabel: "A", action: "答案" },
         ]}
       />
       <Text>{blankLine}</Text>

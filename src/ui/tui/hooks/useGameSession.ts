@@ -6,6 +6,7 @@ import {
   type GameState,
   moveSelection,
   newGame,
+  requestAnswer,
   requestHint,
   undo,
 } from "../../../app/gameState.ts";
@@ -58,6 +59,10 @@ export function useGameSession(columns: number, rows: number) {
     }
     if (input === "h") {
       setGame(requestHint);
+      return;
+    }
+    if (input === "a") {
+      setGame(requestAnswer);
       return;
     }
     if (input === "u") {

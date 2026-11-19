@@ -59,13 +59,18 @@ export function Footer({
               items={[
                 { keyLabel: "U", action: "撤销" },
                 { keyLabel: "H", action: "提示" },
-                { keyLabel: "E/M/D", action: "难度" },
+                { keyLabel: "A", action: "答案" },
               ]}
             />
             <HintRow
               items={[
+                { keyLabel: "E/M/D", action: "难度" },
                 { keyLabel: "N", action: "新局" },
                 { keyLabel: "Q", action: "退出" },
+              ]}
+            />
+            <HintRow
+              items={[
                 { keyLabel: "S", action: "保存" },
                 { keyLabel: "L", action: "加载" },
               ]}

@@ -89,6 +89,10 @@ export function Sidebar(
           <span>提示</span>
           <kbd style={keyStyle}>H</kbd>
         </div>
+        <div style={helpRowStyle}>
+          <span>答案</span>
+          <kbd style={keyStyle}>A</kbd>
+        </div>
       </section>
     </aside>
   );

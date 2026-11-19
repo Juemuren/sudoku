@@ -25,6 +25,7 @@ type Props = {
   onEnterValue: (value: number) => void;
   onUndo: () => void;
   onHint: () => void;
+  onAnswer: () => void;
 };
 
 const difficulties: { value: Difficulty; label: string }[] = [
@@ -50,6 +51,7 @@ export function GamePanel({
   onEnterValue,
   onUndo,
   onHint,
+  onAnswer,
 }: Props) {
   const { badCells, solved, remaining, elapsedSeconds } = stats;
   return (
@@ -156,12 +158,19 @@ export function GamePanel({
           清除
         </button>
       </div>
-      <div style={actionsStyle}>
+      <div style={actionsStyle(width)}>
         <button style={actionButtonStyle(width)} type="button" onClick={onUndo}>
           ↶ <span style={actionLabelStyle}>撤销</span>
         </button>
         <button style={actionButtonStyle(width)} type="button" onClick={onHint}>
           ✦ <span style={actionLabelStyle}>提示</span>
+        </button>
+        <button
+          style={actionButtonStyle(width)}
+          type="button"
+          onClick={onAnswer}
+        >
+          ✓ <span style={actionLabelStyle}>答案</span>
         </button>
         <button
           style={actionButtonStyle(width)}
@@ -252,12 +261,17 @@ function numberButtonStyle(width: number): CSSProperties {
     cursor: "pointer",
   };
 }
-const actionsStyle: CSSProperties = {
-  display: "flex",
-  justifyContent: "center",
-  gap: 13,
-  marginTop: 18,
-};
+function actionsStyle(width: number): CSSProperties {
+  return {
+    display: width <= MOBILE_SCREEN_MAX_WIDTH ? "grid" : "flex",
+    gridTemplateColumns: width <= MOBILE_SCREEN_MAX_WIDTH
+      ? "repeat(2, minmax(0, 1fr))"
+      : undefined,
+    justifyContent: "center",
+    gap: 13,
+    marginTop: 18,
+  };
+}
 function actionButtonStyle(width: number): CSSProperties {
   return {
     border: `1px solid ${colors.controlBorder}`,

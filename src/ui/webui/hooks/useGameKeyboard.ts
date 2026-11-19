@@ -3,6 +3,7 @@ import {
   enterValue,
   type GameState,
   moveSelection,
+  requestAnswer,
   requestHint,
   undo,
 } from "../../../app/gameState.ts";
@@ -55,6 +56,8 @@ export function useGameKeyboard({
         setGame((current) => enterValue(current, 0));
       } else if (event.key.toLowerCase() === "h") {
         setGame(requestHint);
+      } else if (event.key.toLowerCase() === "a") {
+        setGame(requestAnswer);
       } else if (event.key.toLowerCase() === "u") {
         setGame(undo);
       } else if (event.key.toLowerCase() === "n") {

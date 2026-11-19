@@ -4,6 +4,7 @@ import {
   enterValue,
   type GameState,
   newGame,
+  requestAnswer,
   requestHint,
   selectCell,
   undo,
@@ -77,6 +78,7 @@ export function App() {
             setGame((current) => enterValue(current, value))}
           onUndo={() => setGame(undo)}
           onHint={() => setGame(requestHint)}
+          onAnswer={() => setGame(requestAnswer)}
         />
         <Sidebar
           width={width}

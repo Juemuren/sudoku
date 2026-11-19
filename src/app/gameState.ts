@@ -110,17 +110,40 @@ export function requestHint(state: GameState): GameState {
         : "当前没有可用的基础技巧提示。",
     };
   }
-  const board = [...state.board];
-  board[step.index] = step.value;
   const explanation = `提示（${
     step.technique === "single-candidate" ? "唯一候选数" : "唯一位置"
   }）：${step.reason}`;
+  return fillHintCell(state, step.index, step.value, explanation);
+}
+
+/** Fill the first editable cell that differs from the stored solution. */
+export function requestAnswer(state: GameState): GameState {
+  const index = state.board.findIndex(
+    (value, i) => value !== state.solution[i] && state.puzzle[i] === 0,
+  );
+  if (index === -1) return { ...state, message: "没有需要答案的格子。" };
+  const value = state.solution[index];
+  if (value === undefined) throw new Error("答案棋盘缺少数字。");
+  const explanation = `答案：第 ${rowOf(index) + 1} 行第 ${
+    columnOf(index) + 1
+  } 列是 ${value}。`;
+  return fillHintCell(state, index, value, explanation);
+}
+
+function fillHintCell(
+  state: GameState,
+  index: number,
+  value: number,
+  explanation: string,
+): GameState {
+  const board = [...state.board];
+  board[index] = value;
   return {
     ...state,
     board,
     ...clockAfterBoardChange(state, board),
     history: [...state.history, snapshot(state)],
-    selected: step.index,
+    selected: index,
     hintsUsed: state.hintsUsed + 1,
     message: isSolved(board)
       ? `${explanation} 完成！恭喜解出数独。`
